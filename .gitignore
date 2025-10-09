@@ -1,0 +1,99 @@
+
+# Virtual environments
+myvenv/
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variable files
+.env
+.env.*
+
+# Python cache and compiled files
+__pycache__/
+pycache/
+*.py[cod]
+*$py.class
+
+# Test and type-check caches
+.pytest_cache/
+.mypy_cache/
+.pyright/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Distribution / packaging
+*.whl
+*.egg
+
+# C extensions
+*.so
+
+# Logs
+*.log
+logs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Hugging Face / Transformers / Datasets caches and artifacts
+.cache/huggingface/
+.cache/huggingface/hub/
+.cache/torch/
+transformers_cache/
+dset_cache/
+# Common top-level dataset or cache dirs (may be project-specific)
+datasets/
+data/
+
+# Model files and checkpoints
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.model
+*.onnx
+*.h5
+checkpoint
+checkpoints/
+checkpoints-*/
+saved_models/
+models/
+outputs/
+
+# Large archives and datasets
+*.tar.gz
+*.tgz
+*.zip
+*.tar
+
+# ML experiment tracking
+wandb/
+mlruns/
+lightning_logs/
+
+# TensorBoard
+events.out.tfevents.*
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
+*.tmp
+*.bak
+
