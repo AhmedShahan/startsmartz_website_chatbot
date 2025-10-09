@@ -77,15 +77,15 @@ def check_api_key(provider_name, api_key):
 def test_api_keys():
     """Test multiple API keys"""
     
-    # Test OpenAI
-    result = check_api_key("openai", "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")
-    print(f"\n{result['message']}")
-    print(f"Details: {result['details']}")
+    # # Test OpenAI
+    # result = check_api_key("openai", "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")
+    # print(f"\n{result['message']}")
+    # print(f"Details: {result['details']}")
     
-    # Test Anthropic
-    result = check_api_key("anthropic", "YOUR_ANTHROPIC_KEY")
-    print(f"\n{result['message']}")
-    print(f"Details: {result['details']}")
+    # # Test Anthropic
+    # result = check_api_key("anthropic", "YOUR_ANTHROPIC_KEY")
+    # print(f"\n{result['message']}")
+    # print(f"Details: {result['details']}")
     
     # Test Google
     result = check_api_key("google", "AIzaSyAI3zUaAfUEC29Rt78Tm3Sgl9Eg_A82kfg")
