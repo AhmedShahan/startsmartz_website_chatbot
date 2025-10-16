@@ -74,9 +74,23 @@ def check_api_key(provider_name, api_key):
             }
 
 # Example usage
-def test_api_keys():
+def test_api_keys(provider_name, api):
     """Test multiple API keys"""
+    google=["google", "gemini"]
+    openai=["chatgpt", "chatGPT","ChatGPT","openai"]
+    api_provider=""
+    if provider_name.lower() in google:
+        api_provider="google"
+    elif provider_name.lower() in openai:
+        api_provider="openai"
+    else:
+        print("Only OpenAI or Gemini provider")
     
+    result = check_api_key(api_provider,api)
+    print(f"\n{result['status']}")
+    print(f"\n{result['message']}")
+    print(f"Details: {result['details']}")
+
     # # Test OpenAI
     # result = check_api_key("openai", "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")
     # print(f"\n{result['message']}")
@@ -88,9 +102,9 @@ def test_api_keys():
     # print(f"Details: {result['details']}")
     
     # Test Google
-    result = check_api_key("google", "AIzaSyAI3zUaAfUEC29Rt78Tm3Sgl9Eg_A82kfg")
-    print(f"\n{result['message']}")
-    print(f"Details: {result['details']}")
+    # result = check_api_key("google", "AIzaSyAI3zUaAfUEC29Rt78Tm3Sgl9Eg_A82kfg")
+    # print(f"\n{result['message']}")
+    # print(f"Details: {result['details']}")
 
 if __name__ == "__main__":
-    test_api_keys()
+    test_api_keys("google","AIzaSyAI3zUaAfUEC29Rt78Tm3Sgl9Eg_A82kfg")
