@@ -93,7 +93,7 @@ def dfs_crawl(start_url, max_depth=3, user_agent="MyDFSCrawler/1.0", delay=0.5, 
     return sorted(all_internal_links)
 
 if __name__ == "__main__":
-    start = "https://startsmartz.net/"
+    start = "https://www.langchain.com/"
     links = dfs_crawl(start, max_depth=4, user_agent="MyDFSCrawler/1.0", delay=0.3)
     print(len(links))
     for l in links:

@@ -8,8 +8,7 @@ def extract_links(url):
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, 'html.parser')
-    # print("Fetched HTML:")
-    # print(soup.prettify())  # Debug line
+
 
     links = set()
     for a_tag in soup.find_all('a', href=True):
