@@ -20,9 +20,18 @@ All_pages = list(set(all_links) | set(crawled_pages))
 # print(All_pages)
 # print(len(All_pages))
 
-first_page=All_pages[0]
+'''
+Filter just langchain, langgraph, langsmith, keyworkds link. Otehrs should be deleted.
+'''
+keywords = ["langchain", "langgraph", "langsmith"]
+# Filter links that contain any of the keywords
+filtered_links = [link for link in All_pages if any(keyword in link.lower() for keyword in keywords)]
+print(filtered_links)
 
-print("Webpage: ",first_page)
+first_page=filtered_links[0]
+
+
+# print("Webpage: ",first_page)
 
 
 from langchain_community.document_loaders import SeleniumURLLoader
@@ -37,18 +46,21 @@ from dotenv import load_dotenv
 load_dotenv()
 docs=loader.load()
 
-# print(docs)
+print(docs[0].metadata)
 
+
+
+'''
 MessageContent=[
     ('system','You are an Expart Assistent for Question Answer From the Given Webpage Content'),
-    ('human','Please Answer the Question {question} from teh following Content {content}')
+    ('human','Please Answer the Question {question} from the following Content {content}')
 ]
 
 prompt=ChatPromptTemplate.from_messages(MessageContent)
 
 modelGemini=ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
-    temperature=0.5
+    temperature=0.9
 )
 parser=StrOutputParser()
 
@@ -63,3 +75,5 @@ while True:
 
 
     print("\n\nAI: ",response)
+
+'''
