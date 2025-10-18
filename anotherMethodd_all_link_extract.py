@@ -525,7 +525,7 @@ def print_summary(results):
 
 if __name__ == "__main__":
     # Start crawling from the homepage for complete coverage
-    start_url = "https://www.langchain.com/"
+    start_url = "https://vivasoftltd.com/"
     max_pages = 50  # Adjust based on website size
     
     print("Starting website crawl...")
