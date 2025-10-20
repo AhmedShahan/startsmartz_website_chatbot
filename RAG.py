@@ -55,6 +55,8 @@ def rag_answer(query):
     return result
 
 # Usage
-query = "What is LangChain?"
-answer = rag_answer(query)
-print(answer)
+
+while True:
+    query = input("👨‍💻: ")
+    answer = rag_answer(query)
+    print("🤖: ",answer)

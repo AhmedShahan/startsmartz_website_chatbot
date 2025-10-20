@@ -6,27 +6,24 @@ from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 load_dotenv()
 # Load URLs
-with open("/home/shahanahmed/startsmartz_website_chatbot/all_link.txt", "r") as file:
-    content = file.read()
+with open("/home/shahanahmed/startsmartz_website_chatbot/selisegroup_all_links.json", "r") as file:
+    data = json.load(file)
 
 
-import ast
 
 
-# Step 2: Convert string to list safely
-filtered_links = ast.literal_eval(content)
 
-# Step 3: Verify
-print(type(filtered_links))   # <class 'list'>
-# print(links)
+
+
+
 
 # Merge and filter links
-# all_pages = list(set(data['all_links']) | set(data['crawled_pages']))
-# keywords = ["langchain", "langgraph", "langsmith"]
-# filtered_links = [link for link in all_pages if any(kw in link.lower() for kw in keywords)]
+all_pages = list(set(data['all_links']) | set(data['crawled_pages']))
+keywords = ["langchain", "langgraph", "langsmith"]
+filtered_links = [link for link in all_pages if any(kw in link.lower() for kw in keywords)]
 
 # Setup
-splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)
+splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=300)
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 def clean_text(text):
