@@ -6,21 +6,20 @@ from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 load_dotenv()
 # Load URLs
-with open("/home/shahanahmed/startsmartz_website_chatbot/selisegroup_all_links.json", "r") as file:
+with open("/home/shahanahmed/startsmartz_website_chatbot/vivasoft_crawl_results.json", "r") as file:
     data = json.load(file)
-
-
-
-
-
-
-
-
-
 # Merge and filter links
-all_pages = list(set(data['all_links']) | set(data['crawled_pages']))
-keywords = ["langchain", "langgraph", "langsmith"]
-filtered_links = [link for link in all_pages if any(kw in link.lower() for kw in keywords)]
+# Your original (FIXED - you were missing one parenthesis)
+# Add missing set() wrapper
+all_pages = list(
+    set(data['all_links']) | 
+    set(data['failed_pages']) | 
+    set(data['categorized_links']['internal']) |  # Fixed: wrapped in set()
+    set(data['categorized_links']['external'])     # Fixed: separate set()
+)
+
+# keywords = ["langchain", "langgraph", "langsmith"]
+# filtered_links = [link for link in all_pages if any(kw in link.lower() for kw in keywords)]
 
 # Setup
 splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=300)
@@ -34,7 +33,7 @@ def clean_text(text):
 # Process all pages in one loop
 all_data = []
 
-for url in filtered_links:
+for url in all_pages:
     try:
         # Load and chunk
         loader = WebBaseLoader(url)
