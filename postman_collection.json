@@ -1,0 +1,43 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef0123456789",
+    "name": "Provider API Key Validator",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection with a single request to POST /validate"
+  },
+  "item": [
+    {
+      "name": "Validate API Key",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"provider\": \"cohere\",\n  \"api_key\": \"YOUR_API_KEY_HERE\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/validate",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "validate"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
