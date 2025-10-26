@@ -1,14 +1,14 @@
-from fastapi import FastAPI, HTTPException, status
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from typing import Optional
-from sentence_transformers import SentenceTransformer
+from pinecone.grpc import PineconeGRPC as Pinecone  # Changed to gRPC client
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from langchain_cohere import ChatCohere
-from pinecone import Pinecone
+from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict
 from enum import Enum
 import nest_asyncio
 from pyngrok import ngrok
@@ -19,14 +19,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 # Initialize FastAPI app
 app = FastAPI(
     title="RAG Assistant API",
     description="Enterprise RAG API with multi-provider support and credential validation",
     version="1.0.0"
 )
-
 
 # CORS middleware
 app.add_middleware(
@@ -37,83 +35,87 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Enums
 class ProviderEnum(str, Enum):
     gemini = "gemini"
     openai = "openai"
     cohere = "cohere"
 
-
-# Request Models - ONLY query is required now
+# Request Models
 class QueryRequest(BaseModel):
     query: str = Field(..., description="User query text", min_length=1)
 
-
 # Response Models
+class SourceMatch(BaseModel):
+    id: str
+    page_number: str  # Changed from url
+    score: float
+    preview: str
+
 class QueryResponse(BaseModel):
     status: str = Field(..., description="Status from validator or processing")
     message: str = Field(..., description="Message describing the status")
-    content: str = Field(default="", description="Generated response content (empty if validation fails)")
-    sources: Optional[list] = Field(default=None, description="Retrieved context sources")
+    content: str = Field(default="", description="Generated response content")
+    sources: Optional[List[SourceMatch]] = Field(default=None, description="Retrieved context sources")
 
-
-# Initialize RAG components (cached)
+# Global variables for RAG components
 embedding_model = None
 pinecone_index = None
 
-
-# CONSTANT CONFIGURATION - Set your default values here
+# CONSTANT CONFIGURATION
 class AppConfig:
-    PROVIDER = os.getenv("DEFAULT_PROVIDER", "gemini")  # gemini, openai, or cohere
-    CREDENTIAL = os.getenv("DEFAULT_CREDENTIAL", "YOUR_API_KEY_HERE")
-    VALIDATOR_URL = os.getenv("VALIDATOR_URL", "https://your-validator-api.com/validate")
-    TOP_K = int(os.getenv("TOP_K", "3"))
-
+    PROVIDER = "gemini"
+    CREDENTIAL = os.getenv("GOOGLE_API_KEY")
+    VALIDATOR_URL = "https://provider-credential-validdator.onrender.com/validate"
+    TOP_K = int(os.getenv("TOP_K", "5"))
+    PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+    PINECONE_INDEX_NAME = "vivasoft"
+    EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 @app.on_event("startup")
 async def startup_event():
     """Initialize Pinecone and embedding model on startup"""
     global embedding_model, pinecone_index
+    
     try:
-        # Initialize Pinecone
-        api_key = os.getenv("PINECONE_API_KEY")
-        if not api_key:
-            raise ValueError("PINECONE_API_KEY not found in environment variables")
+        if not AppConfig.PINECONE_API_KEY:
+            raise ValueError("❌ PINECONE_API_KEY not found in environment variables")
         
-        pc = Pinecone(api_key=api_key)
-        pinecone_index = pc.Index("vivasoft")
+        if not AppConfig.CREDENTIAL:
+            raise ValueError(f"❌ {AppConfig.PROVIDER.upper()}_API_KEY not found in environment variables")
         
-        # Initialize embedding model
-        embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+        # Initialize Pinecone with gRPC
+        pc = Pinecone(api_key=AppConfig.PINECONE_API_KEY)  # Now using gRPC client
+        pinecone_index = pc.Index(AppConfig.PINECONE_INDEX_NAME)
         
+        # Initialize HuggingFace embeddings
+        embedding_model = HuggingFaceEmbeddings(
+            model_name=AppConfig.EMBEDDING_MODEL,
+            model_kwargs={'device': 'cpu'},
+            encode_kwargs={'normalize_embeddings': True}
+        )
+        
+        print("\n" + "="*60)
         print("✅ RAG components initialized successfully")
-        print(f"✅ Pinecone index 'vivasoft' connected")
+        print(f"✅ Pinecone index '{AppConfig.PINECONE_INDEX_NAME}' connected (gRPC)")
+        print(f"✅ Embedding model: {AppConfig.EMBEDDING_MODEL}")
         print(f"✅ Default provider: {AppConfig.PROVIDER}")
         print(f"✅ Validator URL: {AppConfig.VALIDATOR_URL}")
+        print("="*60 + "\n")
+        
     except Exception as e:
         print(f"❌ Initialization error: {e}")
         raise
 
-
 async def validate_credential(provider: str, credential: str, validator_url: str) -> dict:
-    """
-    Call external validator API to check if credential is valid
-    
-    Expected validator response:
-    {
-        "status": "success" | "limit_exceeded" | "invalid" | "error",
-        "message": "...",
-        "details": "..."
-    }
-    """
+    """Call external validator API to check if credential is valid"""
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 validator_url,
                 json={
                     "provider": provider,
-                    "credential": credential
+                    "api_key": credential
                 }
             )
             
@@ -125,19 +127,25 @@ async def validate_credential(provider: str, credential: str, validator_url: str
                     "message": f"❌ Validator API returned status code {response.status_code}",
                     "details": response.text
                 }
+                
     except httpx.TimeoutException:
         return {
             "status": "error",
             "message": "❌ Validator API request timed out",
             "details": "The validator API did not respond within 30 seconds"
         }
-    except Exception as e:
+    except httpx.RequestError as e:
         return {
             "status": "error",
             "message": "❌ Failed to connect to validator API",
             "details": str(e)
         }
-
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": "❌ Unexpected error during validation",
+            "details": str(e)
+        }
 
 def classify_query(question: str) -> str:
     """Classify if query needs RAG retrieval or is conversational"""
@@ -162,12 +170,32 @@ def classify_query(question: str) -> str:
     
     return "knowledge_based"
 
-
 def get_context(query_text: str, top_k: int = 3) -> tuple:
-    """Retrieve relevant context from Pinecone"""
+    """
+    Retrieve relevant context from Pinecone using embeddings
+    
+    Args:
+        query_text: User query string
+        top_k: Number of top results to retrieve
+        
+    Returns:
+        tuple: (context_string, list_of_matches)
+    """
     try:
+        if embedding_model is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Embedding model not initialized"
+            )
+        
+        if pinecone_index is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Pinecone index not initialized"
+            )
+        
         # Generate query embedding
-        query_vector = embedding_model.encode(query_text, normalize_embeddings=True).tolist()
+        query_vector = embedding_model.embed_query(query_text)
         
         # Query Pinecone
         results = pinecone_index.query(
@@ -176,34 +204,50 @@ def get_context(query_text: str, top_k: int = 3) -> tuple:
             include_metadata=True
         )
         
-        # Format context
+        # Check if we got results
+        if not results.get('matches'):
+            return "No relevant context found.", []
+        
+        # Format context MATCHING STREAMLIT LOGIC
         context_parts = []
+        matches_list = []
+        
         for i, match in enumerate(results['matches']):
-            # Extract metadata
-            metadata = match.get('metadata', {})
-            url = metadata.get('url', 'Unknown')
-            text = metadata.get('text', '')
-            
-            context_parts.append(f"[Source {i+1} from {url}]\n{text}")
-        
-        context = "\n\n---\n\n".join(context_parts)
-        
-        # Format matches for sources
-        matches = []
-        for match in results['matches']:
             metadata = match.get('metadata', {})
             
-            matches.append({
-                'id': match.get('id', 'Unknown'),
-                'url': metadata.get('url', 'Unknown'),
-                'score': round(match.get('score', 0.0), 4),
-                'preview': metadata.get('text', '')[:200]
-            })
+            # Use the CORRECT field names from your Pinecone data
+            page_number = metadata.get('page_number', 'N/A')
+            url = metadata.get('url', 'N/A')
+            content = metadata.get('content', '')  # Changed from 'text' to 'content'
+            
+            if content:
+                # Format context exactly like Streamlit
+                context_parts.append(
+                    f"Page Number: {page_number}\n"
+                    f"URL: {url}\n"
+                    f"Content: {content}"
+                )
+                
+                matches_list.append(
+                    SourceMatch(
+                        id=match.get('id', 'Unknown'),
+                        page_number=str(page_number),  # Changed from url to page_number
+                        score=round(match.get('score', 0.0), 4),
+                        preview=content[:200] + "..." if len(content) > 200 else content
+                    )
+                )
         
-        return context, matches
+        context = "\n\n".join(context_parts) if context_parts else "No relevant context found."
+        
+        return context, matches_list
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Context retrieval error: {str(e)}")
-
+        raise HTTPException(
+            status_code=500,
+            detail=f"Context retrieval error: {str(e)}"
+        )
 
 def initialize_llm(provider: str, credential: str):
     """Initialize LLM based on provider and credential"""
@@ -227,41 +271,38 @@ def initialize_llm(provider: str, credential: str):
                 temperature=0.7
             )
         else:
-            raise ValueError(f"Unsupported provider: {provider}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported provider: {provider}"
+            )
         
         return llm
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"LLM initialization failed: {str(e)}")
-
+        raise HTTPException(
+            status_code=500,
+            detail=f"LLM initialization failed: {str(e)}"
+        )
 
 @app.post("/query", response_model=QueryResponse)
 async def process_query(request: QueryRequest):
-    """
-    Process query with specified LLM provider
-    Steps:
-    1. Validate credential using external validator API
-    2. If validation fails, return validator response
-    3. If validation succeeds, process the query
+    """Process query with RAG pipeline"""
     
-    Note: Provider, credential, validator_url, and top_k are configured as constants
-    """
-    
-    # Use constant configuration values
     provider = AppConfig.PROVIDER
     credential = AppConfig.CREDENTIAL
     validator_url = AppConfig.VALIDATOR_URL
     top_k = AppConfig.TOP_K
     
-    # Step 1: Validate credential using external API
+    # Validate credential
     validation_result = await validate_credential(
         provider=provider,
         credential=credential,
         validator_url=validator_url
     )
     
-    # Step 2: Check validation status
     if validation_result["status"] != "success":
-        # Validation failed - return validator response
         return QueryResponse(
             status=validation_result["status"],
             message=validation_result["message"],
@@ -269,21 +310,14 @@ async def process_query(request: QueryRequest):
             sources=None
         )
     
-    # Step 3: Validation succeeded - process the query
     try:
-        # Initialize LLM with validated credential
         llm = initialize_llm(provider, credential)
-        
-        # Classify query type
         query_type = classify_query(request.query)
-        
-        # Initialize output parser
         output_parser = StrOutputParser()
         
         if query_type == "conversational":
-            # Conversational response without context retrieval
             conversational_prompt = ChatPromptTemplate.from_messages([
-                ('system', '''You are an intelligent, enterprise-grade AI assistant for Vivasoft Ltd. 
+                ('system', '''You are an intelligent, enterprise-grade AI assistant for Vivasoft Ltd.
 
 Core Identity:
 - You represent Vivasoft Ltd and provide helpful assistance.
@@ -304,8 +338,6 @@ Tone & Style:
             ])
             
             chain = conversational_prompt | llm | output_parser
-            
-            # Generate response
             response = chain.invoke({"question": request.query})
             
             return QueryResponse(
@@ -316,38 +348,16 @@ Tone & Style:
             )
         
         else:
-            # Knowledge-based response with context retrieval
+            # UPDATED PROMPT TO MATCH STREAMLIT FORMAT
             knowledge_prompt = ChatPromptTemplate.from_messages([
-                ('system', '''You are an intelligent, enterprise-grade AI assistant for Vivasoft Ltd, powered by advanced RAG technology.
+                ('system', 'You are a Smart AI RAG-based assistant. Please answer the query based on the question.'),
+                ('human', '''Answer the Question {question} ONLY based on the provided context {context}.
+If the content is insufficient, say "I don't have enough knowledge based on the document."
 
-Core Identity:
-- You represent Vivasoft Ltd and provide information based on verified company knowledge.
-- You were developed by Startsmartz Technologies' AI team to help users find accurate information quickly.
-- Your primary purpose is to answer questions about the company's products, services, policies, and operations.
-
-Response Guidelines:
-- Provide accurate, context-based answers using the company knowledge base.
-- Structure responses in clear, concise points when appropriate.
-- If information isn't available in the knowledge base, say: "I don't have that information in the company documents. Please contact the relevant department for assistance."
-- Never speculate or provide information beyond what's in the verified context.
-
-Tone & Style:
-- Professional yet conversational - balance formality with approachability.
-- Clear and concise - respect the user's time.
-- Helpful and solution-oriented - guide users effectively.
-- Maintain enterprise standards in all communications.'''),
-                ('human', '''Context from company knowledge base:
-{context}
-
-User question: {question}
-
-Instructions:
-1. Read the context carefully - it contains relevant information from the company's website and documents.
-2. Answer the question using ONLY information found in the context above.
-3. Be specific and detailed in your answer - use the actual content provided.
-4. Structure your response clearly with bullet points if there are multiple aspects.
-5. If the context genuinely doesn't contain relevant information to answer the question, then say: "I don't have that specific information in the available documents. Please contact the relevant department for assistance."
-6. DO NOT say you don't have information if the context actually contains relevant details - use them to answer!''')
+Provide Response in this format:
+Page Number: [number]
+Original Text: [relevant text from context]
+Answer: [your answer]''')
             ])
             
             chain = knowledge_prompt | llm | output_parser
@@ -356,26 +366,27 @@ Instructions:
             context, matches = get_context(request.query, top_k)
             
             # Generate response
-            response = chain.invoke({"question": request.query, "context": context})
+            response = chain.invoke({
+                "question": request.query,
+                "context": context
+            })
             
             return QueryResponse(
                 status="success",
                 message="✅ Query processed successfully",
                 content=response,
-                sources=matches
+                sources=matches if matches else None
             )
     
     except HTTPException as he:
         raise he
     
     except Exception as e:
-        return QueryResponse(
-            status="error",
-            message="❌ An error occurred while processing your query",
-            content="",
-            sources=None
+        print(f"Error processing query: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"An error occurred while processing your query: {str(e)}"
         )
-
 
 @app.get("/health")
 async def health_check():
@@ -387,10 +398,11 @@ async def health_check():
         "config": {
             "provider": AppConfig.PROVIDER,
             "validator_url": AppConfig.VALIDATOR_URL,
-            "top_k": AppConfig.TOP_K
+            "top_k": AppConfig.TOP_K,
+            "index_name": AppConfig.PINECONE_INDEX_NAME,
+            "client_type": "gRPC"
         }
     }
-
 
 @app.get("/")
 async def root():
@@ -398,7 +410,8 @@ async def root():
     return {
         "message": "RAG Assistant API with Credential Validation",
         "version": "1.0.0",
-        "vector_database": "Pinecone",
+        "vector_database": "Pinecone (gRPC)",
+        "embedding_model": AppConfig.EMBEDDING_MODEL,
         "default_provider": AppConfig.PROVIDER,
         "endpoints": {
             "/query": "POST - Process user query with RAG (only 'query' field required)",
@@ -407,12 +420,9 @@ async def root():
         }
     }
 
-
 if __name__ == "__main__":
-    # Set your ngrok auth token (optional but recommended for longer sessions)
     # ngrok.set_auth_token("YOUR_NGROK_AUTH_TOKEN")
     
-    # Start ngrok tunnel
     public_url = ngrok.connect(8000)
     print("\n" + "="*60)
     print(f"🌐 Public URL: {public_url.public_url}")
@@ -420,8 +430,5 @@ if __name__ == "__main__":
     print(f"🔍 Health Check: {public_url.public_url}/health")
     print("="*60 + "\n")
     
-    # Apply nest_asyncio to allow running async code in environments like Jupyter/Colab
     nest_asyncio.apply()
-    
-    # Run the FastAPI app
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
