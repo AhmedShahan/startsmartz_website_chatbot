@@ -10,8 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 from enum import Enum
-import nest_asyncio
-from pyngrok import ngrok
 import uvicorn
 import httpx
 import os
@@ -421,14 +419,23 @@ async def root():
     }
 
 if __name__ == "__main__":
-    # ngrok.set_auth_token("YOUR_NGROK_AUTH_TOKEN")
-    
-    public_url = ngrok.connect(8000)
-    print("\n" + "="*60)
-    print(f"🌐 Public URL: {public_url.public_url}")
-    print(f"📚 API Docs: {public_url.public_url}/docs")
-    print(f"🔍 Health Check: {public_url.public_url}/health")
-    print("="*60 + "\n")
-    
-    nest_asyncio.apply()
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    # Optional ngrok for local development. Enable by setting USE_NGROK=true
+    if os.getenv("USE_NGROK", "false").lower() in ("1", "true", "yes"):
+        try:
+            from pyngrok import ngrok
+            import nest_asyncio
+
+            local_port = int(os.getenv("LOCAL_PORT", "8000"))
+            public_url = ngrok.connect(local_port)
+            print("\n" + "="*60)
+            print(f"🌐 Public URL: {public_url.public_url}")
+            print(f"📚 API Docs: {public_url.public_url}/docs")
+            print(f"🔍 Health Check: {public_url.public_url}/health")
+            print("="*60 + "\n")
+
+            nest_asyncio.apply()
+        except Exception as e:
+            print("ngrok setup skipped or failed:", e)
+
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
