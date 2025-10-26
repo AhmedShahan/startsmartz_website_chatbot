@@ -1,4 +1,8 @@
+cohere
+langchain-google-genai
+langchain-openai
+langchain-cohere
 fastapi
-uvicorn[standard]
 pydantic
+uvicorn
 pyngrok
