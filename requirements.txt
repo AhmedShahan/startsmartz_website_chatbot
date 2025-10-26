@@ -12,3 +12,6 @@ cohere
 transformers
 sentence-transformers
 pydantic
+grpcio
+protobuf
+googleapis-common-protos
