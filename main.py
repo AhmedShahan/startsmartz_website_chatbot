@@ -349,14 +349,10 @@ Tone & Style:
             # UPDATED PROMPT TO MATCH STREAMLIT FORMAT
             knowledge_prompt = ChatPromptTemplate.from_messages([
                 ('system', 'You are a Smart AI RAG-based assistant. Please answer the query based on the question.'),
-                ('human', '''Answer the Question {question} ONLY based on the provided context {context}.
-If the content is insufficient, say "I don't have enough knowledge based on the document."
-
-Provide Response in this format:
-Page Number: [number]
-Original Text: [relevant text from context]
-Answer: [your answer]''')
+                ('human', '''Answer the question "{question}" based **only** on the provided context: {context}.
+            If the content is insufficient, say "I don't have enough knowledge based on the document."''')
             ])
+
             
             chain = knowledge_prompt | llm | output_parser
             
@@ -419,13 +415,21 @@ async def root():
     }
 
 if __name__ == "__main__":
+    # Determine server port first so ngrok (if used) forwards to the
+    # actual port the server will listen on. You can override PORT or
+    # LOCAL_PORT via environment variables. LOCAL_PORT takes precedence
+    # for the ngrok tunnel if explicitly set, otherwise it defaults to
+    # the server PORT.
+    port = int(os.getenv("PORT", "8010"))
+    # If LOCAL_PORT is set, use it for ngrok; otherwise default to server port
+    local_port = int(os.getenv("LOCAL_PORT", str(port)))
+
     # Optional ngrok for local development. Enable by setting USE_NGROK=true
-    if os.getenv("USE_NGROK", "false").lower() in ("1", "true", "yes"):
+    if os.getenv("USE_NGROK", "true").lower() in ("1", "true", "yes"):
         try:
             from pyngrok import ngrok
             import nest_asyncio
 
-            local_port = int(os.getenv("LOCAL_PORT", "8000"))
             public_url = ngrok.connect(local_port)
             print("\n" + "="*60)
             print(f"🌐 Public URL: {public_url.public_url}")
@@ -437,5 +441,4 @@ if __name__ == "__main__":
         except Exception as e:
             print("ngrok setup skipped or failed:", e)
 
-    port = int(os.getenv("PORT", "8001"))
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
