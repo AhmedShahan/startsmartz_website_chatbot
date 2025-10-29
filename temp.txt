@@ -1,0 +1,2641 @@
+Sample document:
+
+======================== Document 0 ==================== 
+page_content='Table: _prisma_migrations
+id: 1035143a-a326-48b5-8e6f-5e6965d1317b
+checksum: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+finished_at: None
+migration_name: 20250826062900_add_otp
+logs: A migration failed to apply. New migrations cannot be applied before the error is recovered from. Read more about how to resolve migration issues in a production database: https://pris.ly/d/migrate-resolve
+
+Migration name: 20250826062900_add_otp
+
+Database error code: 1065
+
+Database error:
+Query was empty
+
+Please check the query number 1 from the migration file.
+
+   0: sql_schema_connector::apply_migration::apply_script
+           with migration_name="20250826062900_add_otp"
+             at schema-engine/connectors/sql-schema-connector/src/apply_migration.rs:113
+   1: schema_commands::commands::apply_migrations::Applying migration
+           with migration_name="20250826062900_add_otp"
+             at schema-engine/commands/src/commands/apply_migrations.rs:91
+   2: schema_core::state::ApplyMigrations
+             at schema-engine/core/src/state.rs:236
+rolled_back_at: 2025-09-02 18:19:03.937
+started_at: 2025-08-26 06:29:04.027
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 1 ==================== 
+page_content='Table: _prisma_migrations
+id: 4a92274a-50bb-452e-a4da-c4ea4cf9e6c6
+checksum: 26abe666429942abebb56ce37d82f237852f8d8823383c4e264b1f1daa258ae2
+finished_at: 2025-09-17 06:31:40.751
+migration_name: 20250917055222_init
+logs: 
+rolled_back_at: None
+started_at: 2025-09-17 06:31:40.751
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 2 ==================== 
+page_content='Table: _prisma_migrations
+id: 850e2fb6-1196-4615-bf10-6ba5b321c10b
+checksum: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+finished_at: 2025-09-02 18:19:03.943
+migration_name: 20250826062900_add_otp
+logs: 
+rolled_back_at: None
+started_at: 2025-09-02 18:19:03.943
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 3 ==================== 
+page_content='Table: _prisma_migrations
+id: 8a65cb9c-2c6a-400c-ba20-91abee1b81ed
+checksum: 84c6c5d7ca8426d1188414411efee05fb807b350d479864bd9d427ffd7216ef6
+finished_at: 2025-08-26 06:28:35.582
+migration_name: 20250825181241_init
+logs: 
+rolled_back_at: None
+started_at: 2025-08-26 06:28:35.582
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 4 ==================== 
+page_content='Table: _prisma_migrations
+id: 93df5826-2d19-488b-9cb2-201d184cb55e
+checksum: 26abe666429942abebb56ce37d82f237852f8d8823383c4e264b1f1daa258ae2
+finished_at: 2025-09-25 08:41:00.042
+migration_name: 20250925083112_init
+logs: 
+rolled_back_at: None
+started_at: 2025-09-25 08:41:00.042
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 5 ==================== 
+page_content='Table: _prisma_migrations
+id: aaee118b-e6cb-46c0-95da-3c0030ce63f2
+checksum: 26abe666429942abebb56ce37d82f237852f8d8823383c4e264b1f1daa258ae2
+finished_at: None
+migration_name: 20250925083112_init
+logs: A migration failed to apply. New migrations cannot be applied before the error is recovered from. Read more about how to resolve migration issues in a production database: https://pris.ly/d/migrate-resolve
+
+Migration name: 20250925083112_init
+
+Database error code: 1050
+
+Database error:
+Table 'User' already exists
+
+Please check the query number 1 from the migration file.
+
+   0: sql_schema_connector::apply_migration::apply_script
+           with migration_name="20250925083112_init"
+             at schema-engine/connectors/sql-schema-connector/src/apply_migration.rs:113
+   1: schema_commands::commands::apply_migrations::Applying migration
+           with migration_name="20250925083112_init"
+             at schema-engine/commands/src/commands/apply_migrations.rs:95
+   2: schema_core::state::ApplyMigrations
+             at schema-engine/core/src/state.rs:236
+rolled_back_at: 2025-09-25 08:41:00.034
+started_at: 2025-09-25 08:38:26.965
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 6 ==================== 
+page_content='Table: _prisma_migrations
+id: bdec4479-55d2-45ea-8afc-b71f36f25a61
+checksum: 9650185ab1e44eae8fe886c9b55bb7c43eeac9eb1402e5fc4849b3a07953bfac
+finished_at: None
+migration_name: 20250905105453_init
+logs: A migration failed to apply. New migrations cannot be applied before the error is recovered from. Read more about how to resolve migration issues in a production database: https://pris.ly/d/migrate-resolve
+
+Migration name: 20250905105453_init
+
+Database error code: 1050
+
+Database error:
+Table 'User' already exists
+
+Please check the query number 1 from the migration file.
+
+   0: sql_schema_connector::apply_migration::apply_script
+           with migration_name="20250905105453_init"
+             at schema-engine/connectors/sql-schema-connector/src/apply_migration.rs:113
+   1: schema_commands::commands::apply_migrations::Applying migration
+           with migration_name="20250905105453_init"
+             at schema-engine/commands/src/commands/apply_migrations.rs:91
+   2: schema_core::state::ApplyMigrations
+             at schema-engine/core/src/state.rs:236
+rolled_back_at: 2025-09-17 04:36:14.882
+started_at: 2025-09-08 03:27:29.849
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 7 ==================== 
+page_content='Table: _prisma_migrations
+id: c8f1d8f2-62a1-4760-9a87-fcf341408435
+checksum: b2b5d608d36b3eeb049ff3b417c3eb545c5e3177e5c26fbdaecedcc434b0fe6f
+finished_at: None
+migration_name: 20250902110953_init
+logs: A migration failed to apply. New migrations cannot be applied before the error is recovered from. Read more about how to resolve migration issues in a production database: https://pris.ly/d/migrate-resolve
+
+Migration name: 20250902110953_init
+
+Database error code: 1050
+
+Database error:
+Table 'User' already exists
+
+Please check the query number 1 from the migration file.
+
+   0: sql_schema_connector::apply_migration::apply_script
+           with migration_name="20250902110953_init"
+             at schema-engine/connectors/sql-schema-connector/src/apply_migration.rs:113
+   1: schema_commands::commands::apply_migrations::Applying migration
+           with migration_name="20250902110953_init"
+             at schema-engine/commands/src/commands/apply_migrations.rs:91
+   2: schema_core::state::ApplyMigrations
+             at schema-engine/core/src/state.rs:236
+rolled_back_at: 2025-09-03 04:19:51.938
+started_at: 2025-09-02 18:19:15.768
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 8 ==================== 
+page_content='Table: _prisma_migrations
+id: ca11bfdf-7fce-4bcf-a2bb-c5e5db9045b6
+checksum: b2b5d608d36b3eeb049ff3b417c3eb545c5e3177e5c26fbdaecedcc434b0fe6f
+finished_at: 2025-09-03 04:19:51.946
+migration_name: 20250902110953_init
+logs: 
+rolled_back_at: None
+started_at: 2025-09-03 04:19:51.946
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 9 ==================== 
+page_content='Table: _prisma_migrations
+id: e27ad6e4-d575-47f7-8f8b-f82705e36a86
+checksum: 26abe666429942abebb56ce37d82f237852f8d8823383c4e264b1f1daa258ae2
+finished_at: None
+migration_name: 20250917055222_init
+logs: A migration failed to apply. New migrations cannot be applied before the error is recovered from. Read more about how to resolve migration issues in a production database: https://pris.ly/d/migrate-resolve
+
+Migration name: 20250917055222_init
+
+Database error code: 1050
+
+Database error:
+Table 'User' already exists
+
+Please check the query number 1 from the migration file.
+
+   0: sql_schema_connector::apply_migration::apply_script
+           with migration_name="20250917055222_init"
+             at schema-engine/connectors/sql-schema-connector/src/apply_migration.rs:113
+   1: schema_commands::commands::apply_migrations::Applying migration
+           with migration_name="20250917055222_init"
+             at schema-engine/commands/src/commands/apply_migrations.rs:95
+   2: schema_core::state::ApplyMigrations
+             at schema-engine/core/src/state.rs:236
+rolled_back_at: 2025-09-17 06:31:40.743
+started_at: 2025-09-17 06:26:56.441
+applied_steps_count: 0' metadata={'table': '_prisma_migrations'}
+
+
+
+======================== Document 10 ==================== 
+page_content='Table: about_us_information
+id: 7
+title: Innovation fuels our every move Excellence shapes what we achieve
+sub_title: None
+description: Through strategic thinking and practical expertise, we design solutions that solve complex problems, maximize efficiency, and support lasting success for enterprises and startups alike.
+type: mission-vision-headline
+file_id: None
+created_at: 2025-09-02 04:25:11.117
+updated_at: 2025-10-21 09:27:31.879' metadata={'table': 'about_us_information'}
+
+
+
+======================== Document 11 ==================== 
+page_content='Table: about_us_information
+id: 14
+title: Our Mission
+sub_title: None
+description: To deliver easy-to-use software and smart branding that help businesses grow, by providing reliable solutions on time with clear communication and continuous learning.
+type: mission-vision-data
+file_id: None
+created_at: 2025-09-19 05:54:55.289
+updated_at: 2025-10-21 09:22:28.272' metadata={'table': 'about_us_information'}
+
+
+
+======================== Document 12 ==================== 
+page_content='Table: about_us_information
+id: 18
+title: Our Vision 
+sub_title: None
+description: To empower organizations worldwide with trusted technology that grows and changes with their needs, helping them succeed in a fast-changing digital world. By staying flexible and learning new things constantly, we aim to be a reliable partner that supports lasting growth and positive change.
+type: mission-vision-data
+file_id: None
+created_at: 2025-09-26 05:03:58.291
+updated_at: 2025-10-21 09:22:43.839' metadata={'table': 'about_us_information'}
+
+
+
+======================== Document 13 ==================== 
+page_content='Table: about_us_information
+id: 19
+title: Welcome to Startsmartz
+sub_title: Where Technology Meets Excellence!
+description: Empowering businesses with innovative, reliable, and future-ready solutions where technology meets excellence
+type: about-us
+file_id: None
+created_at: 2025-10-22 06:17:04.004
+updated_at: 2025-10-22 06:17:04.004' metadata={'table': 'about_us_information'}
+
+
+
+======================== Document 14 ==================== 
+page_content='Table: about_us_information_file
+id: 36
+about_us_information_id: 18
+file_id: 487
+created_at: 2025-09-26 05:10:52.298
+updated_at: 2025-09-26 05:10:52.298' metadata={'table': 'about_us_information_file'}
+
+
+
+======================== Document 15 ==================== 
+page_content='Table: about_us_information_file
+id: 37
+about_us_information_id: 14
+file_id: 577
+created_at: 2025-10-04 05:13:51.401
+updated_at: 2025-10-04 05:13:51.401' metadata={'table': 'about_us_information_file'}
+
+
+
+======================== Document 16 ==================== 
+page_content='Table: about_us_information_file
+id: 57
+about_us_information_id: 19
+file_id: 681
+created_at: 2025-10-22 06:17:04.016
+updated_at: 2025-10-22 06:17:04.016' metadata={'table': 'about_us_information_file'}
+
+
+
+======================== Document 17 ==================== 
+page_content='Table: about_us_information_file
+id: 58
+about_us_information_id: 19
+file_id: 682
+created_at: 2025-10-22 06:17:04.016
+updated_at: 2025-10-22 06:17:04.016' metadata={'table': 'about_us_information_file'}
+
+
+
+======================== Document 18 ==================== 
+page_content='Table: about_us_information_file
+id: 59
+about_us_information_id: 19
+file_id: 683
+created_at: 2025-10-22 06:17:04.016
+updated_at: 2025-10-22 06:17:04.016' metadata={'table': 'about_us_information_file'}
+
+
+
+======================== Document 19 ==================== 
+page_content='Table: article_category
+id: 13
+name: Flutter Updates
+description: Explore what’s new in Flutter 3.35, hot reload on the web, AI-powered tools, widget previews, Android privacy updates, and more. A must-read for developers looking to stay ahead.
+file_id: None
+created_at: 2025-09-30 09:24:37.279
+updated_at: 2025-09-30 09:24:37.279' metadata={'table': 'article_category'}
+
+
+
+======================== Document 20 ==================== 
+page_content='Table: article_category
+id: 14
+name: Web Development
+description: Discover the future of web development in 2025. Explore key trends, essential skills, and why web development continues to shape innovation and global opportunities.
+file_id: None
+created_at: 2025-09-30 09:37:33.690
+updated_at: 2025-09-30 09:37:33.690' metadata={'table': 'article_category'}
+
+
+
+======================== Document 21 ==================== 
+page_content='Table: career_introduction_file
+id: 17
+career_introduction_id: 7
+file_id: 531
+created_at: 2025-09-29 10:36:13.814
+updated_at: 2025-09-29 10:36:13.814' metadata={'table': 'career_introduction_file'}
+
+
+
+======================== Document 22 ==================== 
+page_content='Table: client_trust_information
+id: 1
+title: Experiences That Inspire
+description: At Startsmartz, we measure our success by the value we create for our clients. Our clients aren’t just customers—they’re partners in innovation. Every project is a collaboration that transforms bold ideas into powerful, real-world solutions.
+type: None
+file_id: None
+created_at: 2025-08-27 03:05:58.652
+updated_at: 2025-09-13 05:18:25.962' metadata={'table': 'client_trust_information'}
+
+
+
+======================== Document 23 ==================== 
+page_content='Table: contact_form
+id: 1
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: hi
+created_at: 2025-08-30 06:58:49.246
+updated_at: 2025-08-30 06:58:49.246' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 24 ==================== 
+page_content='Table: contact_form
+id: 2
+name: Faizul Bitto
+email: faizulbitto123@gmail.com
+phone: +8801707595893
+message: Hello there
+created_at: 2025-09-02 10:10:00.983
+updated_at: 2025-09-02 10:10:00.983' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 25 ==================== 
+page_content='Table: contact_form
+id: 3
+name: faizul bitto
+email: faizulbitto123@gmail.com
+phone: +8801707595893
+message: asdasdadasdasdasdasdsa
+created_at: 2025-09-03 10:49:39.687
+updated_at: 2025-09-03 10:49:39.687' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 26 ==================== 
+page_content='Table: contact_form
+id: 4
+name: Test User
+email: test@example.com
+phone: +8801700000000
+message: Hello from cURL
+created_at: 2025-09-03 17:20:36.553
+updated_at: 2025-09-03 17:20:36.553' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 27 ==================== 
+page_content='Table: contact_form
+id: 5
+name: Abrar Mahir Uddin Sahil
+email: abrar.sahil3501@gmail.com
+phone: +8801521536334
+message: sfdsafdc
+created_at: 2025-09-04 05:00:05.189
+updated_at: 2025-09-04 05:00:05.189' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 28 ==================== 
+page_content='Table: contact_form
+id: 6
+name: Test User
+email: test@example.com
+phone: +8801700000000
+message: Hello from cURL
+created_at: 2025-09-04 05:17:37.032
+updated_at: 2025-09-04 05:17:37.032' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 29 ==================== 
+page_content='Table: contact_form
+id: 7
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: hiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+created_at: 2025-09-09 05:02:54.917
+updated_at: 2025-09-09 05:02:54.917' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 30 ==================== 
+page_content='Table: contact_form
+id: 9
+name: asdf
+email: lol@gmail.com
+phone: +8801999482235
+message: this is test mail 
+created_at: 2025-09-10 03:03:48.354
+updated_at: 2025-09-10 03:03:48.354' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 31 ==================== 
+page_content='Table: contact_form
+id: 11
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: sssssssssssssssssss
+created_at: 2025-09-11 09:50:08.329
+updated_at: 2025-09-11 09:50:08.329' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 32 ==================== 
+page_content='Table: contact_form
+id: 12
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: hi
+created_at: 2025-09-13 04:36:10.189
+updated_at: 2025-09-13 04:36:10.189' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 33 ==================== 
+page_content='Table: contact_form
+id: 13
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: hlw
+created_at: 2025-09-15 05:20:46.284
+updated_at: 2025-09-15 05:20:46.284' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 34 ==================== 
+page_content='Table: contact_form
+id: 14
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: hjyfyu
+created_at: 2025-09-17 05:17:01.285
+updated_at: 2025-09-17 05:17:01.285' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 35 ==================== 
+page_content='Table: contact_form
+id: 15
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: rygeryh
+created_at: 2025-09-18 06:25:08.633
+updated_at: 2025-09-18 06:25:08.633' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 36 ==================== 
+page_content='Table: contact_form
+id: 16
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: qq
+created_at: 2025-09-18 06:28:26.725
+updated_at: 2025-09-18 06:28:26.725' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 37 ==================== 
+page_content='Table: contact_form
+id: 17
+name: Tasmia
+email: 17tasmiakhan@gmail.com
+phone: +8801621296671
+message: 77
+created_at: 2025-09-18 10:40:36.741
+updated_at: 2025-09-18 10:40:36.741' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 38 ==================== 
+page_content='Table: contact_form
+id: 18
+name: Masud
+email: masudrana@gmail.comm
+phone: +8801951835496
+message: test
+created_at: 2025-09-27 04:21:23.988
+updated_at: 2025-09-27 04:21:23.988' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 39 ==================== 
+page_content='Table: contact_form
+id: 19
+name: Abrar Mahir Uddin Sahil
+email: abrar.sahil3501@gmail.com
+phone: +8801521536334
+message: hello
+created_at: 2025-10-04 05:44:42.678
+updated_at: 2025-10-04 05:44:42.678' metadata={'table': 'contact_form'}
+
+
+
+======================== Document 40 ==================== 
+page_content='Table: contact_information
+id: 6
+title: Give us a call
+description: +8809653214109
+type: contact
+file_id: None
+created_at: 2025-10-22 11:26:59.119
+updated_at: 2025-10-22 11:26:59.119' metadata={'table': 'contact_information'}
+
+
+
+======================== Document 41 ==================== 
+page_content='Table: contact_information
+id: 7
+title: Send us an email
+description: info@startsmartz.net
+type: mail
+file_id: None
+created_at: 2025-10-22 11:27:16.855
+updated_at: 2025-10-22 11:27:16.855' metadata={'table': 'contact_information'}
+
+
+
+======================== Document 42 ==================== 
+page_content='Table: contact_information
+id: 8
+title: Visit us
+description: Shahid Abdul Aziz Road, Jogonathpur, Vatara, Dhaka, Bangladesh – 1229
+type: location
+file_id: None
+created_at: 2025-10-22 11:27:35.152
+updated_at: 2025-10-22 11:27:35.152' metadata={'table': 'contact_information'}
+
+
+
+======================== Document 43 ==================== 
+page_content='Table: contact_us_introduction
+id: 1
+title: We’re Just a Message Away
+description: Whether you’re a startup with a vision or an enterprise with big goals, we’d love to hear from you. Let’s turn your ideas into reality.
+type: None
+file_id: None
+created_at: 2025-08-30 06:55:08.498
+updated_at: 2025-09-17 05:41:44.941' metadata={'table': 'contact_us_introduction'}
+
+
+
+======================== Document 44 ==================== 
+page_content='Table: industry_expertise_information
+id: 1
+title: Industry Expertise
+description: At StartSmartz, we combine youthful passion and veteran expertise to deliver modern, trend-aware solutions that empower startups and enterprises, solving real business challenges efficiently and effectively.
+type: None
+file_id: None
+created_at: 2025-08-27 03:05:51.196
+updated_at: 2025-10-21 09:10:31.306' metadata={'table': 'industry_expertise_information'}
+
+
+
+======================== Document 45 ==================== 
+page_content='Table: job_application
+id: 15
+name: Md Abdullah Al Roman
+email: abdullahalroman003@gmail.com
+phone: +8801732808547
+years_of_experience: 5
+salary_expectation: 40000
+file_id: 596
+job_offer_id: 10
+created_at: 2025-10-07 06:24:45.614
+updated_at: 2025-10-07 06:24:45.614' metadata={'table': 'job_application'}
+
+
+
+======================== Document 46 ==================== 
+page_content='Table: job_application
+id: 16
+name: Ibrahim Bhuiyan
+email: ibrahim.bhuiyan.783@gmail.com
+phone: +8801837333995
+years_of_experience: 1
+salary_expectation: 25000
+file_id: 597
+job_offer_id: 10
+created_at: 2025-10-11 19:24:37.583
+updated_at: 2025-10-11 19:24:37.583' metadata={'table': 'job_application'}
+
+
+
+======================== Document 47 ==================== 
+page_content='Table: job_application
+id: 17
+name: Junaed Mahfuz
+email: junaed.mahfuz@gmail.com
+phone: +8801705039166
+years_of_experience: 19
+salary_expectation: 60000
+file_id: 600
+job_offer_id: 10
+created_at: 2025-10-18 05:04:19.411
+updated_at: 2025-10-18 05:04:19.411' metadata={'table': 'job_application'}
+
+
+
+======================== Document 48 ==================== 
+page_content='Table: job_offer
+id: 10
+title: Marketing Executive 
+sub_title: IT Website Promotion & Branding
+description: Overview: The Marketing Executive will be responsible for planning, executing, and managing online and offline marketing strategies to increase the visibility, credibility, and reach of Startsmartz Technologies. The candidate must have a strong background in IT marketing, branding, website promotion, and digital campaigns.
+
+vacancy: None
+type: None
+file_id: None
+created_at: 2025-10-04 05:22:28.334
+updated_at: 2025-10-04 05:24:34.240' metadata={'table': 'job_offer'}
+
+
+
+======================== Document 49 ==================== 
+page_content='Table: otp
+id: 123
+otp_code: 402933
+expires_at: 2025-10-22 05:50:36.305
+used: 1
+attempts: 0
+user_id: 4
+created_at: 2025-10-22 05:48:36.322
+updated_at: 2025-10-22 05:49:13.359' metadata={'table': 'otp'}
+
+
+
+======================== Document 50 ==================== 
+page_content='Table: overview_information
+id: 4
+title:  A Quick Look at Startsmartz
+description: Learn how Startsmartz combines innovation and technology to bring meaningful value to customers through clear and effective approaches.
+type: None
+file_id: 456
+created_at: 2025-09-13 05:11:40.742
+updated_at: 2025-09-19 05:16:12.959' metadata={'table': 'overview_information'}
+
+
+
+======================== Document 51 ==================== 
+page_content='Table: product
+id: 6
+slug: e-commerce-retail-management-platform
+title: E-Commerce & Retail Management Platform
+short_tagline: Sales simplified, brand amplified.
+description: Transform data into decisions. Accelerate growth with connected sales, inventory, and customer insights
+hero_title: None
+hero_subtitle: None
+hero_image: https://s3.ap-south-1.amazonaws.com/emr.buckett/E-Commerce & Retail Management Platform.png
+product_category_id: None
+created_at: 2025-09-24 10:07:41
+updated_at: 2025-10-21 06:35:11' metadata={'table': 'product'}
+
+
+
+======================== Document 52 ==================== 
+page_content='Table: product
+id: 7
+slug: hotel-management-system
+title: Hotel Management System
+short_tagline: The key to effortless hospitality
+description: Focus on your guests, not the grind. Manage bookings, operations, and experiences effortlessly.
+hero_title: None
+hero_subtitle: None
+hero_image: https://s3.ap-south-1.amazonaws.com/emr.buckett/Hotel Management System.png
+product_category_id: None
+created_at: 2025-09-26 06:19:12
+updated_at: 2025-10-21 06:26:33' metadata={'table': 'product'}
+
+
+
+======================== Document 53 ==================== 
+page_content='Table: product
+id: 8
+slug: hospital-pharmacy-management
+title: Hospital & Pharmacy Management
+short_tagline: Smarter care, stronger trust
+description: Unified control from patient admission to pharmacy operations, all in one system.
+hero_title: None
+hero_subtitle: None
+hero_image: https://s3.ap-south-1.amazonaws.com/emr.buckett/Hospital & Pharmacy Management.png
+product_category_id: None
+created_at: 2025-09-26 06:22:10
+updated_at: 2025-10-21 04:56:45' metadata={'table': 'product'}
+
+
+
+======================== Document 54 ==================== 
+page_content='Table: product
+id: 9
+slug: video-streaming-content-delivery-platform
+title: Video Streaming & Content Delivery Platform
+short_tagline: Content that connects and captivates.
+description: High-speed, reliable video delivery built for modern content creators and audiences.
+hero_title: None
+hero_subtitle: None
+hero_image: https://s3.ap-south-1.amazonaws.com/emr.buckett/Video Streaming & Content Delivery Platform.png
+product_category_id: None
+created_at: 2025-09-26 06:25:48
+updated_at: 2025-10-21 06:24:16' metadata={'table': 'product'}
+
+
+
+======================== Document 55 ==================== 
+page_content='Table: product
+id: 10
+slug: hr-workforce-management-system
+title: HR & Workforce Management System
+short_tagline: Better teams, brighter workplace.
+description: From hire to inspire, a unified platform that turns HR chaos into clarity and performance.
+hero_title: None
+hero_subtitle: None
+hero_image: https://s3.ap-south-1.amazonaws.com/emr.buckett/HR & Workforce Management System.png
+product_category_id: None
+created_at: 2025-09-27 06:10:03
+updated_at: 2025-10-21 06:27:48' metadata={'table': 'product'}
+
+
+
+======================== Document 56 ==================== 
+page_content='Table: product
+id: 13
+slug: learning-management-virtual-training-platform
+title: Learning Management & Virtual Training Platform
+short_tagline: Click, learn, conquer
+description: Engaging digital learning that adapts to every learner’s pace and need.
+hero_title: None
+hero_subtitle: None
+hero_image: https://s3.ap-south-1.amazonaws.com/emr.buckett/Learning Management & Virtual Training Platform.png
+product_category_id: None
+created_at: 2025-10-21 06:32:04
+updated_at: 2025-10-21 06:32:04' metadata={'table': 'product'}
+
+
+
+======================== Document 57 ==================== 
+page_content='Table: product
+id: 14
+slug: ai-integrated-electronic-medical-records-system
+title: AI-Integrated Electronic Medical Records System
+short_tagline: Helping hospitals run smoothly and shine in care
+description: Smarter patient management through connected, AI-powered healthcare data.
+hero_title: None
+hero_subtitle: None
+hero_image: https://s3.ap-south-1.amazonaws.com/emr.buckett/AI-Integrated Electronic Medical Records System.png
+product_category_id: None
+created_at: 2025-10-21 06:32:46
+updated_at: 2025-10-21 06:32:46' metadata={'table': 'product'}
+
+
+
+======================== Document 58 ==================== 
+page_content='Table: product_key_benefits_section
+id: 4
+product_id: 8
+description: PMS is more than a pharmacy management tool, it’s a complete solution that gives pharmacies, hospitals, and distributors a competitive edge. With smart inventory control, faster billing, and compliance-ready reporting, PMS helps businesses save time, reduce costs, and deliver better service.
+created_at: 2025-09-30 05:14:00
+updated_at: 2025-10-04 07:24:06' metadata={'table': 'product_key_benefits_section'}
+
+
+
+======================== Document 59 ==================== 
+page_content='Table: product_key_benefits_section
+id: 5
+product_id: 6
+description: Smarter operations, higher sales, and stronger customer loyalty
+created_at: 2025-09-30 06:16:05
+updated_at: 2025-10-04 08:53:18' metadata={'table': 'product_key_benefits_section'}
+
+
+
+======================== Document 60 ==================== 
+page_content='Table: product_key_benefits_section
+id: 6
+product_id: 10
+description: Measurable results that drive your business forward
+created_at: 2025-10-03 04:51:37
+updated_at: 2025-10-04 05:06:17' metadata={'table': 'product_key_benefits_section'}
+
+
+
+======================== Document 61 ==================== 
+page_content='Table: product_key_benefits_section
+id: 7
+product_id: 7
+description: Seamless operations, delighted guests, and higher profits
+created_at: 2025-10-04 07:09:02
+updated_at: 2025-10-04 07:14:35' metadata={'table': 'product_key_benefits_section'}
+
+
+
+======================== Document 62 ==================== 
+page_content='Table: product_key_benefits_section
+id: 8
+product_id: 9
+description: Stream smarter, grow faster, and own your entertainment brand
+created_at: 2025-10-04 08:45:35
+updated_at: 2025-10-04 08:48:54' metadata={'table': 'product_key_benefits_section'}
+
+
+
+======================== Document 63 ==================== 
+page_content='Table: product_key_benefits_section
+id: 9
+product_id: 14
+description: Smarter operations, higher sales, and stronger customer loyalty
+created_at: 2025-10-26 06:29:04
+updated_at: 2025-10-26 06:29:04' metadata={'table': 'product_key_benefits_section'}
+
+
+
+======================== Document 64 ==================== 
+page_content='Table: product_media
+id: 16
+product_id: 6
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Shodei/Shodei/Shodei+%E2%80%93+E-commerce+Platform+by+Startsmartz+-+admin+dashbord.jpg
+alt_text: Admin
+sort_order: 0
+file_id: None
+created_at: 2025-09-24 10:18:16
+updated_at: 2025-09-24 10:18:16' metadata={'table': 'product_media'}
+
+
+
+======================== Document 65 ==================== 
+page_content='Table: product_media
+id: 17
+product_id: 6
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Work+Suit/Work+Suit/Shodei+Customer+Pannel/Shodei+Customer+Pannel/Shodei+%E2%80%93+E-commerce+Platform+by+Startsmartz+-+home+Page.jpg
+alt_text: Home
+sort_order: 10
+file_id: None
+created_at: 2025-09-24 10:19:05
+updated_at: 2025-09-24 10:19:05' metadata={'table': 'product_media'}
+
+
+
+======================== Document 66 ==================== 
+page_content='Table: product_media
+id: 18
+product_id: 6
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Shodei+e-commerce+platform+by+Startsmartz+Technologies.png
+alt_text: Mobile
+sort_order: 20
+file_id: None
+created_at: 2025-09-24 10:19:24
+updated_at: 2025-09-24 10:19:24' metadata={'table': 'product_media'}
+
+
+
+======================== Document 67 ==================== 
+page_content='Table: product_media
+id: 19
+product_id: 9
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Linx+Stream/Linx+Stream/Linx+Stream+%E2%80%93+Video+Streaming+Platform+by+Startsmartz+-+Login.jpg
+alt_text: Login
+sort_order: 0
+file_id: None
+created_at: 2025-09-26 09:38:57
+updated_at: 2025-09-26 09:38:57' metadata={'table': 'product_media'}
+
+
+
+======================== Document 68 ==================== 
+page_content='Table: product_media
+id: 20
+product_id: 9
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Linx+Stream/Linx+Stream/Linx+Stream+%E2%80%93+Video+Streaming+Platform+by+Startsmartz+-home+page.jpg
+alt_text: Home
+sort_order: 10
+file_id: None
+created_at: 2025-09-26 09:39:24
+updated_at: 2025-09-26 09:39:24' metadata={'table': 'product_media'}
+
+
+
+======================== Document 69 ==================== 
+page_content='Table: product_media
+id: 21
+product_id: 9
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Linx+Stream/Linx+Stream/Linx+Stream+%E2%80%93+Video+Streaming+Platform+by+Startsmartz+-subscrription.jpg
+alt_text: Subscription 
+sort_order: 20
+file_id: None
+created_at: 2025-09-26 09:40:41
+updated_at: 2025-09-26 09:40:41' metadata={'table': 'product_media'}
+
+
+
+======================== Document 70 ==================== 
+page_content='Table: product_media
+id: 22
+product_id: 7
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Hotel/Hotel/Hotel+Management+System+%E2%80%93+Startsmartz+Technologies+-+Dashbord.jpg
+alt_text: Dashbord
+sort_order: 0
+file_id: None
+created_at: 2025-09-26 09:54:25
+updated_at: 2025-09-26 09:54:25' metadata={'table': 'product_media'}
+
+
+
+======================== Document 71 ==================== 
+page_content='Table: product_media
+id: 23
+product_id: 7
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Hotel/Hotel/Hotel+Management+System+%E2%80%93+Startsmartz+Technologies+-+Inventory.jpg
+alt_text: Inventory
+sort_order: 10
+file_id: None
+created_at: 2025-09-26 09:54:46
+updated_at: 2025-09-26 09:54:46' metadata={'table': 'product_media'}
+
+
+
+======================== Document 72 ==================== 
+page_content='Table: product_media
+id: 24
+product_id: 7
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Hotel/Hotel/Hotel+Management+System+%E2%80%93+Startsmartz+Technologies+-+Reservation.jpg
+alt_text: Reservation
+sort_order: 20
+file_id: None
+created_at: 2025-09-26 09:55:03
+updated_at: 2025-09-26 09:55:03' metadata={'table': 'product_media'}
+
+
+
+======================== Document 73 ==================== 
+page_content='Table: product_media
+id: 25
+product_id: 7
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Hotel/Hotel/Hotel+Management+System+%E2%80%93+Startsmartz+Technologies+-+Room+Booking.jpg
+alt_text: Room Booking
+sort_order: 30
+file_id: None
+created_at: 2025-09-26 09:55:31
+updated_at: 2025-09-26 09:55:31' metadata={'table': 'product_media'}
+
+
+
+======================== Document 74 ==================== 
+page_content='Table: product_media
+id: 26
+product_id: 10
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Work Suit by Startsmartz â Business Management Software - Dashbord.jpg
+alt_text: Dashboard
+sort_order: 0
+file_id: 510
+created_at: 2025-09-27 09:19:06
+updated_at: 2025-09-27 09:19:06' metadata={'table': 'product_media'}
+
+
+
+======================== Document 75 ==================== 
+page_content='Table: product_media
+id: 27
+product_id: 10
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Work Suit by Startsmartz â Business Management Software - Notice Bord.jpg
+alt_text: Notice Board 
+sort_order: 10
+file_id: 511
+created_at: 2025-09-27 09:19:46
+updated_at: 2025-09-27 09:19:46' metadata={'table': 'product_media'}
+
+
+
+======================== Document 76 ==================== 
+page_content='Table: product_media
+id: 28
+product_id: 10
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Work Suit by Startsmartz â Business Management Software.jpg
+alt_text: leaves 
+sort_order: 20
+file_id: 512
+created_at: 2025-09-27 09:21:13
+updated_at: 2025-09-27 09:21:13' metadata={'table': 'product_media'}
+
+
+
+======================== Document 77 ==================== 
+page_content='Table: product_media
+id: 29
+product_id: 8
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Pharmacy management software by Startsmartz Technology - D.jpg
+alt_text: Report
+sort_order: 0
+file_id: 558
+created_at: 2025-09-30 09:04:30
+updated_at: 2025-09-30 09:04:30' metadata={'table': 'product_media'}
+
+
+
+======================== Document 78 ==================== 
+page_content='Table: product_media
+id: 30
+product_id: 8
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Pharmacy management software by Startsmartz Technology - Dashboard.jpg
+alt_text: Dashboard
+sort_order: 10
+file_id: 559
+created_at: 2025-09-30 09:04:44
+updated_at: 2025-09-30 09:04:44' metadata={'table': 'product_media'}
+
+
+
+======================== Document 79 ==================== 
+page_content='Table: product_media
+id: 31
+product_id: 8
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Pharmacy management software by Startsmartz Technology - purchase.jpg
+alt_text:  Purchase
+sort_order: 20
+file_id: 560
+created_at: 2025-09-30 09:05:01
+updated_at: 2025-09-30 09:05:01' metadata={'table': 'product_media'}
+
+
+
+======================== Document 80 ==================== 
+page_content='Table: product_media
+id: 32
+product_id: 8
+type: screenshot
+url: https://s3.ap-south-1.amazonaws.com/emr.buckett/Pharmacy management software by Startsmartz Technology - Supplier list.jpg
+alt_text: Supplier list
+sort_order: 30
+file_id: 561
+created_at: 2025-09-30 09:05:25
+updated_at: 2025-09-30 09:05:25' metadata={'table': 'product_media'}
+
+
+
+======================== Document 81 ==================== 
+page_content='Table: product_overview
+id: 5
+product_id: 8
+title: PMS – Smarter Pharmacy & Inventory Management
+short_description: PMS is a complete pharmacy management solution designed to streamline day-to-day operations of pharmacies, medical stores, and hospital dispensaries. From managing prescriptions to monitoring medicine stock and tracking sales, PMS ensures accuracy, compliance, and efficiency.
+image_url: https://s3.ap-south-1.amazonaws.com/emr.buckett/ph 1.jpg
+file_id: 533
+created_at: 2025-09-30 03:56:10
+updated_at: 2025-09-30 04:12:35' metadata={'table': 'product_overview'}
+
+
+
+======================== Document 82 ==================== 
+page_content='Table: product_overview
+id: 6
+product_id: 10
+title: All in One Business Management Suite
+short_description: A modern, all-in-one business management software that unifies CRM, HR, project management, and finance into a single easy-to-use platform. From managing employees to tracking sales leads and monitoring projects, it helps teams stay productive, connected, and focused on growth.
+image_url: https://s3.ap-south-1.amazonaws.com/emr.buckett/HR 1.jpg
+file_id: 544
+created_at: 2025-09-30 05:44:34
+updated_at: 2025-09-30 05:44:34' metadata={'table': 'product_overview'}
+
+
+
+======================== Document 83 ==================== 
+page_content='Table: product_overview
+id: 7
+product_id: 9
+title: Everything You Need to Run a Successful Streaming Business
+short_description: A next generation OTT solution that lets you build and manage your own Netflix style streaming platform. With support for on demand videos, live streaming, and multi-category content, it gives you complete control over your brand, audience, and monetization.
+image_url: https://s3.ap-south-1.amazonaws.com/emr.buckett/c9829bdf20e4775a34df99505729ba0c.jpg
+file_id: 552
+created_at: 2025-09-30 06:27:35
+updated_at: 2025-09-30 06:29:18' metadata={'table': 'product_overview'}
+
+
+
+======================== Document 84 ==================== 
+page_content='Table: product_overview
+id: 8
+product_id: 7
+title: Smarter Features for Seamless Hospitality
+short_description: An all-in-one hotel management solution designed to simplify and centralize operations for hotels, resorts, and service apartments. From reservations and staff to restaurants, inventory, and guest services, it helps businesses deliver seamless guest experiences while boosting efficiency and revenue.
+image_url: https://s3.ap-south-1.amazonaws.com/emr.buckett/h3.jpg
+file_id: 557
+created_at: 2025-09-30 07:11:46
+updated_at: 2025-09-30 07:13:22' metadata={'table': 'product_overview'}
+
+
+
+======================== Document 85 ==================== 
+page_content='Table: product_overview
+id: 9
+product_id: 6
+title: All in One Tools to Power Your Online Business
+short_description: A complete e-commerce management solution designed for online stores, vendors, and marketplace operators. From managing products and orders to handling promotions, analytics, and user control, it centralizes every operation into one powerful platform for smooth, scalable business growth.
+image_url: https://s3.ap-south-1.amazonaws.com/emr.buckett/e1317fd12bf55bd7075d3aa9001dce8b.jpg
+file_id: 563
+created_at: 2025-09-30 09:12:41
+updated_at: 2025-09-30 09:14:07' metadata={'table': 'product_overview'}
+
+
+
+======================== Document 86 ==================== 
+page_content='Table: product_overview_feature
+id: 30
+product_id: 8
+overview_id: 5
+title: Dashboard & Analytics
+description: Real-time insights with visual reports to track sales, purchases, and inventory at a glance.
+sort_order: 0
+created_at: 2025-09-30 04:12:35
+updated_at: 2025-09-30 04:12:35' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 87 ==================== 
+page_content='Table: product_overview_feature
+id: 31
+product_id: 8
+overview_id: 5
+title: Customer & Supplier Management
+description: Easily manage patients, customers, suppliers, and their histories in one place.
+sort_order: 10
+created_at: 2025-09-30 04:12:35
+updated_at: 2025-09-30 04:12:35' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 88 ==================== 
+page_content='Table: product_overview_feature
+id: 32
+product_id: 8
+overview_id: 5
+title: Inventory & Stock Control
+description: Monitor stock levels in real time, avoid shortages, and reduce wastage.
+sort_order: 20
+created_at: 2025-09-30 04:12:35
+updated_at: 2025-09-30 04:12:35' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 89 ==================== 
+page_content='Table: product_overview_feature
+id: 33
+product_id: 8
+overview_id: 5
+title: Finance & Accounts
+description: Manage expenses, accounts, transactions, bank records, and generate balance sheets and statements.
+sort_order: 30
+created_at: 2025-09-30 04:12:35
+updated_at: 2025-09-30 04:12:35' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 90 ==================== 
+page_content='Table: product_overview_feature
+id: 34
+product_id: 8
+overview_id: 5
+title: Flexible Payments
+description: Multiple payment methods including cash, card, and mobile banking.
+sort_order: 40
+created_at: 2025-09-30 04:12:35
+updated_at: 2025-09-30 04:12:35' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 91 ==================== 
+page_content='Table: product_overview_feature
+id: 35
+product_id: 10
+overview_id: 6
+title: CRM
+description: Easily manage leads and prospects while tracking your entire sales pipeline. Stay organized with smart follow-ups to close deals faster.
+sort_order: 0
+created_at: 2025-09-30 05:44:34
+updated_at: 2025-09-30 05:44:34' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 92 ==================== 
+page_content='Table: product_overview_feature
+id: 36
+product_id: 10
+overview_id: 6
+title: HR Management
+description: Simplify HR operations with leave, attendance, and onboarding tools. Boost transparency and engagement with holiday calendars and appreciation features.
+sort_order: 10
+created_at: 2025-09-30 05:44:34
+updated_at: 2025-09-30 05:44:34' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 93 ==================== 
+page_content='Table: product_overview_feature
+id: 37
+product_id: 10
+overview_id: 6
+title: Project & Task Management
+description: Create, assign, and track projects with built-in timesheets and progress monitoring. Keep teams aligned with seamless collaboration tools.
+sort_order: 20
+created_at: 2025-09-30 05:44:34
+updated_at: 2025-09-30 05:44:34' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 94 ==================== 
+page_content='Table: product_overview_feature
+id: 38
+product_id: 10
+overview_id: 6
+title: Events & Notice Board
+description: rganize meetings, company events, and schedules from a central hub. Publish announcements, policies, and updates to keep everyone informed
+sort_order: 30
+created_at: 2025-09-30 05:44:34
+updated_at: 2025-09-30 05:44:34' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 95 ==================== 
+page_content='Table: product_overview_feature
+id: 39
+product_id: 10
+overview_id: 6
+title: Communication Tools
+description: Collaborate with your team using built-in chat and notifications. Reduce app-switching and keep all communication in one place.
+sort_order: 40
+created_at: 2025-09-30 05:44:34
+updated_at: 2025-09-30 05:44:34' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 96 ==================== 
+page_content='Table: product_overview_feature
+id: 45
+product_id: 9
+overview_id: 7
+title: End to End Streaming
+description: Offer both on-demand and live streaming with HD/4K quality and personalized recommendations.
+sort_order: 0
+created_at: 2025-09-30 06:29:18
+updated_at: 2025-09-30 06:29:18' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 97 ==================== 
+page_content='Table: product_overview_feature
+id: 46
+product_id: 9
+overview_id: 7
+title: Cross Platform Access
+description: Seamless viewing on web, mobile apps, smart TVs, and tablets.
+sort_order: 10
+created_at: 2025-09-30 06:29:18
+updated_at: 2025-09-30 06:29:18' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 98 ==================== 
+page_content='Table: product_overview_feature
+id: 47
+product_id: 9
+overview_id: 7
+title: Flexible Monetization
+description: Earn revenue through subscriptions, ads, and pay-per-view models.
+sort_order: 20
+created_at: 2025-09-30 06:29:18
+updated_at: 2025-09-30 06:29:18' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 99 ==================== 
+page_content='Table: product_overview_feature
+id: 48
+product_id: 9
+overview_id: 7
+title: Content Security
+description: Protect your videos with DRM, watermarking, and secure CDN delivery.
+sort_order: 30
+created_at: 2025-09-30 06:29:18
+updated_at: 2025-09-30 06:29:18' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 100 ==================== 
+page_content='Table: product_overview_feature
+id: 49
+product_id: 9
+overview_id: 7
+title: Analytics & Customization
+description: Track audience insights, revenue, and fully brand the platform with your own design and domain.
+sort_order: 40
+created_at: 2025-09-30 06:29:18
+updated_at: 2025-09-30 06:29:18' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 101 ==================== 
+page_content='Table: product_overview_feature
+id: 55
+product_id: 7
+overview_id: 8
+title: Centralized Reservation
+description: Smart booking system with customer profiles and complaint tracking.
+sort_order: 0
+created_at: 2025-09-30 07:13:22
+updated_at: 2025-09-30 07:13:22' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 102 ==================== 
+page_content='Table: product_overview_feature
+id: 56
+product_id: 7
+overview_id: 8
+title: Staff & Operations Control
+description: Role-based staff management, inventory, and expense tracking.
+sort_order: 10
+created_at: 2025-09-30 07:13:22
+updated_at: 2025-09-30 07:13:22' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 103 ==================== 
+page_content='Table: product_overview_feature
+id: 57
+product_id: 7
+overview_id: 8
+title: Restaurant & Spa Integration
+description: Built-in restaurant ordering, KOT, and wellness scheduling.
+sort_order: 20
+created_at: 2025-09-30 07:13:22
+updated_at: 2025-09-30 07:13:22' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 104 ==================== 
+page_content='Table: product_overview_feature
+id: 58
+product_id: 7
+overview_id: 8
+title: Finance & Billing Automation
+description: Multi-currency invoicing, payments, and subscription management.
+sort_order: 30
+created_at: 2025-09-30 07:13:22
+updated_at: 2025-09-30 07:13:22' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 105 ==================== 
+page_content='Table: product_overview_feature
+id: 59
+product_id: 7
+overview_id: 8
+title: Analytics & Reports
+description: Real-time dashboards and detailed financial/operational reports.
+sort_order: 40
+created_at: 2025-09-30 07:13:22
+updated_at: 2025-09-30 07:13:22' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 106 ==================== 
+page_content='Table: product_overview_feature
+id: 65
+product_id: 6
+overview_id: 9
+title: Order & Sales Management
+description: End-to-end automation of orders, returns, refunds, and tracking.
+sort_order: 0
+created_at: 2025-09-30 09:14:07
+updated_at: 2025-09-30 09:14:07' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 107 ==================== 
+page_content='Table: product_overview_feature
+id: 66
+product_id: 6
+overview_id: 9
+title: Product & Vendor Control
+description: Easy setup, bulk uploads, and multi-seller marketplace support.
+sort_order: 10
+created_at: 2025-09-30 09:14:07
+updated_at: 2025-09-30 09:14:07' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 108 ==================== 
+page_content='Table: product_overview_feature
+id: 67
+product_id: 6
+overview_id: 9
+title: Promotions & Marketing
+description: Campaigns, deals, banners, and customer engagement tools.
+sort_order: 20
+created_at: 2025-09-30 09:14:07
+updated_at: 2025-09-30 09:14:07' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 109 ==================== 
+page_content='Table: product_overview_feature
+id: 68
+product_id: 6
+overview_id: 9
+title: Customer & Support Tools
+description: Centralized customer database, delivery tracking, and ticket-based support.
+sort_order: 30
+created_at: 2025-09-30 09:14:07
+updated_at: 2025-09-30 09:14:07' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 110 ==================== 
+page_content='Table: product_overview_feature
+id: 69
+product_id: 6
+overview_id: 9
+title: Analytics & Integrations
+description: Real-time dashboards, exportable reports, and third-party service integrations.
+sort_order: 40
+created_at: 2025-09-30 09:14:07
+updated_at: 2025-09-30 09:14:07' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 111 ==================== 
+page_content='Table: product_overview_feature
+id: 80
+product_id: 14
+overview_id: 10
+title: AI-Powered Clinical Decision Support
+description: Leverage machine learning to analyze patient data, flagging potential risks, suggesting differential diagnoses, and ensuring adherence to the latest clinical guidelines, acting as a tireless assistant to clinicians.
+sort_order: 0
+created_at: 2025-10-26 11:02:39
+updated_at: 2025-10-26 11:02:39' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 112 ==================== 
+page_content='Table: product_overview_feature
+id: 81
+product_id: 14
+overview_id: 10
+title: Smart Clinical Charting
+description: Drastically cut down on documentation time with customizable, specialty-specific templates and a powerful, integrated voice-to-text transcription engine. Capture complete, accurate notes faster than ever.
+sort_order: 10
+created_at: 2025-10-26 11:02:39
+updated_at: 2025-10-26 11:02:39' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 113 ==================== 
+page_content='Table: product_overview_feature
+id: 84
+product_id: 14
+overview_id: 10
+title: Security and Compliance
+description: Maintain the highest standards of data integrity and patient privacy with multi-factor authentication, granular access controls, and a platform built to exceed HIPAA/HITECH compliance requirements.
+sort_order: 40
+created_at: 2025-10-26 11:02:39
+updated_at: 2025-10-26 11:02:39' metadata={'table': 'product_overview_feature'}
+
+
+
+======================== Document 114 ==================== 
+page_content='Table: service_category
+id: 14
+title: Custom Software Development
+description: Smart, reliable solutions built to power business success.
+type: custom-software-development
+file_id: 785
+created_at: 2025-09-25 09:06:40.435
+updated_at: 2025-10-25 11:11:55.799' metadata={'table': 'service_category'}
+
+
+
+======================== Document 115 ==================== 
+page_content='Table: service_category
+id: 15
+title: AI & Data Solutions
+description: Modern web solutions designed to accelerate business growth.
+type: ai--data-solutions
+file_id: 649
+created_at: 2025-09-25 09:07:11.476
+updated_at: 2025-10-21 09:05:53.674' metadata={'table': 'service_category'}
+
+
+
+======================== Document 116 ==================== 
+page_content='Table: service_category
+id: 16
+title: Digital Marketing & Brand Growth
+description: Reach the right audience through smart digital strategies
+type: digital-marketing--brand-growth
+file_id: 787
+created_at: 2025-09-25 09:07:50.454
+updated_at: 2025-10-25 11:13:10.791' metadata={'table': 'service_category'}
+
+
+
+======================== Document 117 ==================== 
+page_content='Table: service_category
+id: 17
+title: UI/UX & Product Design
+description: Designs that elevate usability, beauty, and user experience.
+type: uiux--product-design
+file_id: 788
+created_at: 2025-09-25 09:08:30.339
+updated_at: 2025-10-26 03:53:59.958' metadata={'table': 'service_category'}
+
+
+======================== Document 118 ==================== 
+page_content='Table: service_category
+id: 18
+title: SaaS Product Engineering
+description: Scalable cloud-based products engineered for performance and reliability.
+type: saas-product-engineering
+file_id: 645
+created_at: 2025-09-25 09:08:59.419
+updated_at: 2025-10-21 07:00:26.153' metadata={'table': 'service_category'}
+
+
+
+======================== Document 119 ==================== 
+page_content='Table: service_category
+id: 19
+title: DevOps & CI/CD Automation
+description: Continuous integration and delivery pipelines that accelerate innovation
+type: devops--cicd-automation
+file_id: 789
+created_at: 2025-09-25 09:09:28.051
+updated_at: 2025-10-26 03:54:11.571' metadata={'table': 'service_category'}
+
+
+
+======================== Document 120 ==================== 
+page_content='Table: service_sub_category
+id: 32
+name: Web Applications
+service_category_id: 14
+file_id: None
+created_at: 2025-09-26 05:06:13.182
+updated_at: 2025-10-25 06:00:25.829' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 121 ==================== 
+page_content='Table: service_sub_category
+id: 33
+name: Mobile Apps
+service_category_id: 14
+file_id: None
+created_at: 2025-09-26 05:06:16.009
+updated_at: 2025-10-25 06:00:59.670' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 122 ==================== 
+page_content='Table: service_sub_category
+id: 34
+name: Enterprise Websites & Cloud Solutions 
+service_category_id: 14
+file_id: None
+created_at: 2025-09-26 05:06:17.340
+updated_at: 2025-10-25 06:12:46.881' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 123 ==================== 
+page_content='Table: service_sub_category
+id: 43
+name: Data Engineering & Cloud Foundation
+service_category_id: 15
+file_id: None
+created_at: 2025-09-26 05:11:28.324
+updated_at: 2025-10-25 09:38:31.957' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 124 ==================== 
+page_content='Table: service_sub_category
+id: 48
+name: Business Intelligence & Reporting
+service_category_id: 15
+file_id: None
+created_at: 2025-09-26 08:43:10.010
+updated_at: 2025-10-25 09:39:14.667' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 125 ==================== 
+page_content='Table: service_sub_category
+id: 52
+name: Content Marketing
+service_category_id: 16
+file_id: None
+created_at: 2025-09-26 09:22:51.811
+updated_at: 2025-10-25 10:15:27.931' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 126 ==================== 
+page_content='Table: service_sub_category
+id: 54
+name: Performance Analytics 
+service_category_id: 16
+file_id: None
+created_at: 2025-09-26 09:24:08.479
+updated_at: 2025-10-25 10:15:56.687' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 127 ==================== 
+page_content='Table: service_sub_category
+id: 64
+name: Architecture Design
+service_category_id: 18
+file_id: None
+created_at: 2025-09-29 09:27:01.240
+updated_at: 2025-10-25 11:00:21.600' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 128 ==================== 
+page_content='Table: service_sub_category
+id: 65
+name: DevOps & Delivery
+service_category_id: 18
+file_id: None
+created_at: 2025-09-29 09:27:30.725
+updated_at: 2025-10-25 11:00:45.746' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 129 ==================== 
+page_content='Table: service_sub_category
+id: 66
+name: Monitoring & Analytics
+service_category_id: 18
+file_id: None
+created_at: 2025-09-29 09:27:58.226
+updated_at: 2025-10-25 11:01:15.195' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 130 ==================== 
+page_content='Table: service_sub_category
+id: 71
+name: CI/CD Pipeline Setup
+service_category_id: 19
+file_id: None
+created_at: 2025-09-29 09:52:57.104
+updated_at: 2025-10-25 11:05:54.002' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 131 ==================== 
+page_content='Table: service_sub_category
+id: 73
+name: DevSecOps Integration
+service_category_id: 19
+file_id: None
+created_at: 2025-09-29 09:53:48.831
+updated_at: 2025-10-25 11:06:26.085' metadata={'table': 'service_sub_category'}
+
+
+
+======================== Document 132 ==================== 
+page_content='Table: service_sub_category_description
+id: 40
+content: <p class="ql-align-justify">Less manual work, faster decisions. We build the central, intelligent web platform that runs your business whether it's managing operations, sales, or data. Think of it as the custom headquarters for your team</p>
+service_sub_category_id: 32
+created_at: 2025-09-26 05:06:13.430
+updated_at: 2025-10-25 06:00:25.879' metadata={'table': 'service_sub_category_description'}
+
+
+
+======================== Document 133 ==================== 
+page_content='Table: service_sub_category_description
+id: 41
+content: <p class="ql-align-justify">We create beautiful, high-speed mobile apps for iPhone and Android that let your customers and employees interact with your service seamlessly, on the go.</p>
+service_sub_category_id: 33
+created_at: 2025-09-26 05:06:16.117
+updated_at: 2025-10-25 06:00:59.716' metadata={'table': 'service_sub_category_description'}
+
+
+
+======================== Document 134 ==================== 
+page_content='Table: social_link
+id: 9
+title: Facebook
+link: https://www.facebook.com/profile.php?id=61577706041136
+file_id: 458
+created_at: 2025-09-19 05:31:26.745
+updated_at: 2025-09-19 05:31:26.745' metadata={'table': 'social_link'}
+
+
+
+======================== Document 135 ==================== 
+page_content='Table: social_link
+id: 10
+title: Instagram
+link: https://www.instagram.com/techmartz23/
+file_id: 459
+created_at: 2025-09-19 05:36:45.800
+updated_at: 2025-09-19 05:36:45.800' metadata={'table': 'social_link'}
+
+
+
+======================== Document 136 ==================== 
+page_content='Table: social_link
+id: 11
+title: LinkedIn
+link: https://www.linkedin.com/company/startsmartz-technologies-bangladesh
+file_id: 460
+created_at: 2025-09-19 05:38:05.591
+updated_at: 2025-09-19 05:38:05.591' metadata={'table': 'social_link'}
+
+
+
+======================== Document 137 ==================== 
+page_content='Table: social_link
+id: 12
+title: Youtube
+link: https://www.youtube.com/@StartsmartzTechnologies
+file_id: 463
+created_at: 2025-09-24 04:41:41.550
+updated_at: 2025-09-24 04:42:23.237' metadata={'table': 'social_link'}
+
+
+
+======================== Document 138 ==================== 
+page_content='Table: team_information
+id: 1
+title: Meet the Intellectual Properties Behind Startsmartz
+description: Meet the people behind our amazing venture—leaders with experience and young minds with innovation.
+type: None
+file_id: None
+created_at: 2025-08-27 04:39:03.636
+updated_at: 2025-10-21 09:23:38.705' metadata={'table': 'team_information'}
+
+
+
+======================== Document 139 ==================== 
+page_content='Table: team_member
+id: 29
+name: Akhil Raj
+position: 1
+designation: Project Management
+description: None
+file_id: 685
+created_at: 2025-10-22 06:49:04.342
+updated_at: 2025-10-22 06:49:04.342' metadata={'table': 'team_member'}
+
+
+
+======================== Document 140 ==================== 
+page_content='Table: team_member
+id: 30
+name: Ashraf Uddin
+position: 2
+designation: Business Development Manager
+description: None
+file_id: 686
+created_at: 2025-10-22 06:49:56.225
+updated_at: 2025-10-22 06:49:56.225' metadata={'table': 'team_member'}
+
+
+
+======================== Document 141 ==================== 
+page_content='Table: team_member
+id: 31
+name: Abrar Mahir Uddin Sahil
+position: 3
+designation: Business Analyst
+description: None
+file_id: 691
+created_at: 2025-10-22 06:50:44.055
+updated_at: 2025-10-22 06:52:23.027' metadata={'table': 'team_member'}
+
+
+
+======================== Document 142 ==================== 
+page_content='Table: team_member
+id: 32
+name: Masud Rana
+position: 4
+designation: Digital Marketing Executive
+description: None
+file_id: 688
+created_at: 2025-10-22 06:51:08.487
+updated_at: 2025-10-22 06:51:08.487' metadata={'table': 'team_member'}
+
+
+
+======================== Document 143 ==================== 
+page_content='Table: team_member
+id: 33
+name: Mohsin Miah
+position: 5
+designation: Backed Team Lead
+description: None
+file_id: 689
+created_at: 2025-10-22 06:51:33.010
+updated_at: 2025-10-22 06:51:33.010' metadata={'table': 'team_member'}
+
+
+
+======================== Document 144 ==================== 
+page_content='Table: team_member
+id: 34
+name: Shahanaj Parvin
+position: 6
+designation: Frontend Team Lead
+description: None
+file_id: 690
+created_at: 2025-10-22 06:51:53.246
+updated_at: 2025-10-22 06:51:53.246' metadata={'table': 'team_member'}
+
+
+
+======================== Document 145 ==================== 
+page_content='Table: technology_category
+id: 3
+title: Languages
+file_id: 253
+created_at: 2025-08-30 06:03:17.937
+updated_at: 2025-09-09 04:46:44.115' metadata={'table': 'technology_category'}
+
+
+
+======================== Document 146 ==================== 
+page_content='Table: technology_category
+id: 4
+title: Frontend
+file_id: 95
+created_at: 2025-08-30 06:04:35.481
+updated_at: 2025-08-30 06:19:10.169' metadata={'table': 'technology_category'}
+
+
+
+======================== Document 147 ==================== 
+page_content='Table: technology_category
+id: 5
+title: Backend
+file_id: 96
+created_at: 2025-08-30 06:13:14.327
+updated_at: 2025-08-30 06:19:27.245' metadata={'table': 'technology_category'}
+
+
+
+======================== Document 148 ==================== 
+page_content='Table: technology_category
+id: 6
+title: UI/UX
+file_id: 89
+created_at: 2025-08-30 06:13:52.728
+updated_at: 2025-08-30 06:13:52.728' metadata={'table': 'technology_category'}
+
+
+
+======================== Document 149 ==================== 
+page_content='Table: technology_category
+id: 7
+title: DevOps - Services
+file_id: 143
+created_at: 2025-08-30 06:14:48.735
+updated_at: 2025-09-01 10:47:31.112' metadata={'table': 'technology_category'}
+
+
+
+======================== Document 150 ==================== 
+page_content='Table: technology_category
+id: 8
+title: Artificial Intelligence
+file_id: 171
+created_at: 2025-08-30 06:15:18.799
+updated_at: 2025-09-02 09:58:43.315' metadata={'table': 'technology_category'}
+
+
+
+======================== Document 151 ==================== 
+page_content='Table: technology_category
+id: 9
+title: Mobile
+file_id: 92
+created_at: 2025-08-30 06:15:53.156
+updated_at: 2025-08-30 06:15:53.156' metadata={'table': 'technology_category'}
+
+
+
+======================== Document 152 ==================== 
+page_content='Table: technology_information
+id: 1
+title: The Startsmartz Stack
+description: StartSmartz combines frameworks, cloud infrastructure, and innovative design approaches to deliver secure, scalable solutions that drives a lasting growth for our clients.
+type: None
+file_id: None
+created_at: 2025-08-27 03:05:44.712
+updated_at: 2025-10-21 09:13:52.969' metadata={'table': 'technology_information'}
+
+
+
+======================== Document 153 ==================== 
+page_content='Table: technology_product
+id: 10
+name: Ruby
+technology_category_id: 3
+file_id: 98
+created_at: 2025-08-30 09:51:54.710
+updated_at: 2025-08-30 09:51:54.710' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 154 ==================== 
+page_content='Table: technology_product
+id: 11
+name: php
+technology_category_id: 3
+file_id: 99
+created_at: 2025-08-30 09:52:38.327
+updated_at: 2025-08-30 09:52:38.327' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 155 ==================== 
+page_content='Table: technology_product
+id: 12
+name: Python
+technology_category_id: 3
+file_id: 100
+created_at: 2025-08-30 09:53:15.807
+updated_at: 2025-08-30 09:53:15.807' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 156 ==================== 
+page_content='Table: technology_product
+id: 13
+name: Java
+technology_category_id: 3
+file_id: 101
+created_at: 2025-08-30 09:53:41.161
+updated_at: 2025-08-30 09:53:41.161' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 157 ==================== 
+page_content='Table: technology_product
+id: 14
+name: Swift
+technology_category_id: 3
+file_id: 102
+created_at: 2025-08-30 09:54:15.984
+updated_at: 2025-08-30 09:54:15.984' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 158 ==================== 
+page_content='Table: technology_product
+id: 15
+name: Javascript
+technology_category_id: 3
+file_id: 103
+created_at: 2025-08-30 09:59:26.544
+updated_at: 2025-08-30 09:59:26.544' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 159 ==================== 
+page_content='Table: technology_product
+id: 16
+name: Kotlin
+technology_category_id: 3
+file_id: 104
+created_at: 2025-08-30 10:00:33.611
+updated_at: 2025-08-30 10:00:33.611' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 160 ==================== 
+page_content='Table: technology_product
+id: 17
+name: React
+technology_category_id: 4
+file_id: 108
+created_at: 2025-09-01 06:05:32.496
+updated_at: 2025-09-01 06:05:32.496' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 161 ==================== 
+page_content='Table: technology_product
+id: 18
+name: Next.js
+technology_category_id: 4
+file_id: 356
+created_at: 2025-09-01 06:07:49.805
+updated_at: 2025-09-16 07:13:21.724' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 162 ==================== 
+page_content='Table: technology_product
+id: 19
+name: Angular
+technology_category_id: 4
+file_id: 110
+created_at: 2025-09-01 06:08:56.057
+updated_at: 2025-09-01 06:08:56.057' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 163 ==================== 
+page_content='Table: technology_product
+id: 20
+name: Vuejs
+technology_category_id: 4
+file_id: 111
+created_at: 2025-09-01 06:10:41.704
+updated_at: 2025-09-01 06:10:41.704' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 164 ==================== 
+page_content='Table: technology_product
+id: 21
+name: Tailwindcss
+technology_category_id: 4
+file_id: 112
+created_at: 2025-09-01 06:12:26.081
+updated_at: 2025-09-01 06:12:26.081' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 165 ==================== 
+page_content='Table: technology_product
+id: 22
+name: Bootstrap
+technology_category_id: 4
+file_id: 113
+created_at: 2025-09-01 06:13:00.530
+updated_at: 2025-09-01 06:13:00.530' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 166 ==================== 
+page_content='Table: technology_product
+id: 23
+name: AWS
+technology_category_id: 7
+file_id: 142
+created_at: 2025-09-01 10:46:08.431
+updated_at: 2025-09-01 10:46:08.431' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 167 ==================== 
+page_content='Table: technology_product
+id: 24
+name: Operation
+technology_category_id: 7
+file_id: 144
+created_at: 2025-09-01 10:50:39.282
+updated_at: 2025-09-01 10:50:39.282' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 168 ==================== 
+page_content='Table: technology_product
+id: 25
+name: CI/CD
+technology_category_id: 7
+file_id: 145
+created_at: 2025-09-01 10:51:53.956
+updated_at: 2025-09-01 10:51:53.956' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 169 ==================== 
+page_content='Table: technology_product
+id: 26
+name: Docker
+technology_category_id: 7
+file_id: 146
+created_at: 2025-09-01 10:54:14.580
+updated_at: 2025-09-01 10:54:14.580' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 170 ==================== 
+page_content='Table: technology_product
+id: 27
+name: Jenkins
+technology_category_id: 7
+file_id: 147
+created_at: 2025-09-01 10:54:45.998
+updated_at: 2025-09-01 10:54:45.998' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 171 ==================== 
+page_content='Table: technology_product
+id: 28
+name: Kubernetes
+technology_category_id: 7
+file_id: 148
+created_at: 2025-09-01 10:55:35.100
+updated_at: 2025-09-01 10:55:35.100' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 172 ==================== 
+page_content='Table: technology_product
+id: 29
+name: Datadog
+technology_category_id: 7
+file_id: 149
+created_at: 2025-09-01 10:56:59.379
+updated_at: 2025-09-01 10:56:59.379' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 173 ==================== 
+page_content='Table: technology_product
+id: 30
+name: Ansible
+technology_category_id: 7
+file_id: 150
+created_at: 2025-09-01 10:57:40.505
+updated_at: 2025-09-01 10:57:40.505' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 174 ==================== 
+page_content='Table: technology_product
+id: 31
+name: Figma
+technology_category_id: 6
+file_id: 151
+created_at: 2025-09-01 10:58:13.788
+updated_at: 2025-09-01 10:58:13.788' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 175 ==================== 
+page_content='Table: technology_product
+id: 32
+name: Adobe-xd
+technology_category_id: 6
+file_id: 152
+created_at: 2025-09-01 10:58:40.977
+updated_at: 2025-09-01 10:58:40.977' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 176 ==================== 
+page_content='Table: technology_product
+id: 33
+name: Express js
+technology_category_id: 5
+file_id: 153
+created_at: 2025-09-01 11:01:18.176
+updated_at: 2025-09-01 11:01:18.176' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 177 ==================== 
+page_content='Table: technology_product
+id: 34
+name: Django
+technology_category_id: 5
+file_id: 154
+created_at: 2025-09-01 11:01:51.979
+updated_at: 2025-09-01 11:01:51.979' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 178 ==================== 
+page_content='Table: technology_product
+id: 35
+name: Terraform
+technology_category_id: 7
+file_id: 155
+created_at: 2025-09-01 11:03:35.022
+updated_at: 2025-09-01 11:03:35.022' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 179 ==================== 
+page_content='Table: technology_product
+id: 36
+name: Prometheus & Grafana
+technology_category_id: 7
+file_id: 156
+created_at: 2025-09-01 11:04:35.489
+updated_at: 2025-09-01 11:04:35.489' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 180 ==================== 
+page_content='Table: technology_product
+id: 37
+name: Flask
+technology_category_id: 5
+file_id: 157
+created_at: 2025-09-01 11:08:26.993
+updated_at: 2025-09-01 11:08:26.993' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 181 ==================== 
+page_content='Table: technology_product
+id: 38
+name: Laravel
+technology_category_id: 5
+file_id: 158
+created_at: 2025-09-01 11:09:03.067
+updated_at: 2025-09-01 11:09:03.067' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 182 ==================== 
+page_content='Table: technology_product
+id: 39
+name: Spring Boot
+technology_category_id: 5
+file_id: 159
+created_at: 2025-09-01 11:09:48.675
+updated_at: 2025-09-01 11:09:48.675' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 183 ==================== 
+page_content='Table: technology_product
+id: 40
+name: .Net Core
+technology_category_id: 5
+file_id: 160
+created_at: 2025-09-01 11:11:31.754
+updated_at: 2025-09-01 11:11:31.754' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 184 ==================== 
+page_content='Table: technology_product
+id: 41
+name: Flutter
+technology_category_id: 9
+file_id: 161
+created_at: 2025-09-01 11:13:54.888
+updated_at: 2025-09-01 11:13:54.888' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 185 ==================== 
+page_content='Table: technology_product
+id: 42
+name: Ruby
+technology_category_id: 5
+file_id: 162
+created_at: 2025-09-01 11:25:24.871
+updated_at: 2025-09-01 11:25:24.871' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 186 ==================== 
+page_content='Table: technology_product
+id: 43
+name: Nestjs
+technology_category_id: 5
+file_id: 163
+created_at: 2025-09-01 11:29:06.104
+updated_at: 2025-09-01 11:29:06.104' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 187 ==================== 
+page_content='Table: technology_product
+id: 44
+name: Fastify
+technology_category_id: 5
+file_id: 164
+created_at: 2025-09-01 11:29:41.235
+updated_at: 2025-09-01 11:29:41.235' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 188 ==================== 
+page_content='Table: technology_product
+id: 45
+name: FastAPI
+technology_category_id: 5
+file_id: 165
+created_at: 2025-09-01 11:30:31.850
+updated_at: 2025-09-01 11:30:31.850' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 189 ==================== 
+page_content='Table: technology_product
+id: 46
+name: Phoenix
+technology_category_id: 5
+file_id: 166
+created_at: 2025-09-01 11:30:58.153
+updated_at: 2025-09-01 11:30:58.153' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 190 ==================== 
+page_content='Table: technology_product
+id: 47
+name: Gin
+technology_category_id: 5
+file_id: 167
+created_at: 2025-09-01 11:31:39.658
+updated_at: 2025-09-01 11:31:39.658' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 191 ==================== 
+page_content='Table: technology_product
+id: 48
+name: Threejs
+technology_category_id: 4
+file_id: 170
+created_at: 2025-09-02 05:37:13.703
+updated_at: 2025-09-02 05:37:13.703' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 192 ==================== 
+page_content='Table: technology_product
+id: 49
+name: Machine Learning
+technology_category_id: 8
+file_id: 172
+created_at: 2025-09-02 10:14:19.505
+updated_at: 2025-09-02 10:14:19.505' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 193 ==================== 
+page_content='Table: technology_product
+id: 50
+name: Artificial Neural Network
+technology_category_id: 8
+file_id: 173
+created_at: 2025-09-02 10:15:27.528
+updated_at: 2025-09-02 10:15:27.528' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 194 ==================== 
+page_content='Table: technology_product
+id: 51
+name: Generative AI
+technology_category_id: 8
+file_id: 174
+created_at: 2025-09-02 10:16:08.339
+updated_at: 2025-09-02 10:16:08.339' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 195 ==================== 
+page_content='Table: technology_product
+id: 52
+name: Agentic AI
+technology_category_id: 8
+file_id: 175
+created_at: 2025-09-02 10:16:42.212
+updated_at: 2025-09-02 10:16:42.212' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 196 ==================== 
+page_content='Table: technology_product
+id: 53
+name: Multi-Modal AI
+technology_category_id: 8
+file_id: 176
+created_at: 2025-09-02 10:17:11.334
+updated_at: 2025-09-02 10:17:11.334' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 197 ==================== 
+page_content='Table: technology_product
+id: 54
+name: Artificial General Intelligence
+technology_category_id: 8
+file_id: 177
+created_at: 2025-09-02 10:17:56.820
+updated_at: 2025-09-02 10:17:56.820' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 198 ==================== 
+page_content='Table: technology_product
+id: 55
+name: Computer Vision & Image Processing
+technology_category_id: 8
+file_id: 178
+created_at: 2025-09-02 10:18:26.245
+updated_at: 2025-09-02 10:18:26.245' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 199 ==================== 
+page_content='Table: technology_product
+id: 56
+name: Deep Reinforcement Learning
+technology_category_id: 8
+file_id: 180
+created_at: 2025-09-02 10:19:07.046
+updated_at: 2025-09-02 10:19:07.046' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 200 ==================== 
+page_content='Table: technology_product
+id: 57
+name: Natural Language Processing
+technology_category_id: 8
+file_id: 181
+created_at: 2025-09-02 10:19:33.649
+updated_at: 2025-09-02 10:19:33.649' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 201 ==================== 
+page_content='Table: technology_product
+id: 58
+name: Large Language Model
+technology_category_id: 8
+file_id: 182
+created_at: 2025-09-02 10:20:07.839
+updated_at: 2025-09-02 10:20:07.839' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 202 ==================== 
+page_content='Table: technology_product
+id: 59
+name: MLOps and LLMOps
+technology_category_id: 8
+file_id: 183
+created_at: 2025-09-02 10:20:37.408
+updated_at: 2025-09-02 10:20:37.408' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 203 ==================== 
+page_content='Table: technology_product
+id: 61
+name: React Native
+technology_category_id: 9
+file_id: 357
+created_at: 2025-09-16 07:21:17.970
+updated_at: 2025-09-16 07:21:17.970' metadata={'table': 'technology_product'}
+
+
+
+======================== Document 204 ==================== 
+page_content='Table: user
+id: 1
+name: admin
+email: admin@gmail.com
+password: $2b$10$5qNdSu8VgpbJvRXbke9W2.u4IXjEPakWbYGMG0XkfL6GnC47a2X3C
+created_at: 2025-07-07 07:05:44.000
+updated_at: 2025-07-07 07:05:44.000' metadata={'table': 'user'}
+
+
+
+======================== Document 205 ==================== 
+page_content='Table: user
+id: 4
+name: Super Admin
+email: 17tasmiakhan@gmail.com
+password: $2b$10$kymRmZM6hWyOt41FgpVVpeEpuGTsQAxXO5reN/rWRQGccL2kG3vjy
+created_at: 2025-09-18 10:33:51.809
+updated_at: 2025-10-27 04:06:18.381' metadata={'table': 'user'}
+
+
+
+======================== Document 206 ==================== 
+page_content='Table: why_work_here_introduction
+id: 1
+title: Where Talent Meets Quality
+description: Working at Startsmartz means being part of a culture that values collaboration, learning, and growth. Just as technology evolves every day, we believe our people should, too. We encourage continuous learning, knowledge sharing, and mutual support. Because when one of us grows, we all grow. Just like technology, we do not stand still, we evolve, adapt, and improve every day.
+type: None
+file_id: None
+created_at: 2025-09-01 05:20:02.733
+updated_at: 2025-09-19 06:29:24.624' metadata={'table': 'why_work_here_introduction'}
+
+
+
+======================== Document 207 ==================== 
+page_content='Table: why_work_here_reason
+id: 2
+title: People First Culture
+description: At Startsmartz, you’re not just an employee, you’re a valued member of a family that builds, learns, and grows together.
+type: None
+file_id: None
+created_at: 2025-09-01 05:23:15.927
+updated_at: 2025-09-19 06:28:46.386' metadata={'table': 'why_work_here_reason'}
+
+
+
+======================== Document 208 ==================== 
+page_content='Table: why_work_here_reason
+id: 3
+title: Continuous Learning
+description: In today’s fast-changing tech world, learning never stops. We provide the resources and culture to keep you ahead.
+type: None
+file_id: None
+created_at: 2025-09-11 10:34:22.168
+updated_at: 2025-09-11 10:34:22.168' metadata={'table': 'why_work_here_reason'}
+
+
+
+======================== Document 209 ==================== 
+page_content='Table: why_work_here_reason
+id: 5
+title: Innovation at the Core
+description: We thrive on creativity and problem-solving. Here, you’ll work on exciting projects that push boundaries and make a real impact.
+
+type: None
+file_id: None
+created_at: 2025-09-19 06:27:07.632
+updated_at: 2025-09-19 06:27:07.632' metadata={'table': 'why_work_here_reason'}
+
+
+
+======================== Document 210 ==================== 
+page_content='Table: why_work_here_reason
+id: 6
+title: Empowerment & Trust
+description: We give you the freedom to take ownership of your work, share ideas, and make decisions that drive real change.
+
+
+type: None
+file_id: None
+created_at: 2025-09-19 06:27:31.224
+updated_at: 2025-09-19 06:27:31.224' metadata={'table': 'why_work_here_reason'}
+
+
+
