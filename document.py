@@ -42,10 +42,16 @@ for match in insert_pattern.findall(sql_text):
             continue  # skip malformed
 
 # 3. Build LangChain Documents with readable content
+# List of table names to exclude
+exclude_tables = ['_prisma_migrations', 'contact_form', 'job_application', 'otp']
+
+# 3. Build LangChain Documents with readable content
 documents = []
 for table, records in table_inserts.items():
+    if table in exclude_tables:
+        continue  # Skip sensitive tables
     for record in records:
-        entries = [f"{k}: {str(v)}" for k,v in record.items()]
+        entries = [f"{k}: {str(v)}" for k, v in record.items()]
         doc_text = f"Table: {table}\n" + "\n".join(entries)
         documents.append(Document(page_content=doc_text, metadata={"table": table}))
 
@@ -67,7 +73,7 @@ doc_text = f"This record belongs to the table '{table}'. " + " ".join(entries)
 #     print(doc)
 #     print("\n\n")
 
-remove_table=[]
+
 ######## Embedding andd vectorization store
 from pinecone.grpc import PineconeGRPC as Pinecone
 from langchain_community.embeddings import HuggingFaceEmbeddings
