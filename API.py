@@ -5,26 +5,32 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from langchain_cohere import ChatCohere
-import os
-import sys
-import time
-import random
-from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict
 from datetime import datetime
+import uvicorn
+import os
+from dotenv import load_dotenv
 
 load_dotenv()
 
-# ANSI color codes for terminal (only for UI elements, not response content)
-class Colors:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    WHITE = '\033[97m'
-    BOLD = '\033[1m'
-    END = '\033[0m'
+# Initialize FastAPI app
+app = FastAPI(
+    title="Startsmartz RAG Chat API",
+    description="Interactive RAG-powered chat API with conversational AI and knowledge retrieval",
+    version="2.0.0"
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Configuration
 class AppConfig:
@@ -35,65 +41,48 @@ class AppConfig:
     PINECONE_INDEX_NAME = "startsmartz"
     EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
+# Request Models
+class ChatRequest(BaseModel):
+    query: str = Field(..., description="User query", min_length=1)
+    session_id: Optional[str] = Field(None, description="Optional session ID for conversation tracking")
+
+class ChatHistoryRequest(BaseModel):
+    session_id: str = Field(..., description="Session ID to retrieve history")
+
+# Response Models
+class SourceInfo(BaseModel):
+    page: str
+    score: float
+    preview: str
+
+class ChatResponse(BaseModel):
+    response: str = Field(..., description="AI assistant response in Markdown format")
+    query_type: str = Field(..., description="Type of query: conversational or knowledge_based")
+    sources: Optional[List[SourceInfo]] = Field(None, description="Source references for knowledge-based queries")
+    timestamp: str = Field(..., description="Response timestamp")
+    session_id: Optional[str] = Field(None, description="Session identifier")
+
+class HistoryItem(BaseModel):
+    timestamp: str
+    user_message: str
+    assistant_response: str
+    query_type: str
+
+class ChatHistoryResponse(BaseModel):
+    session_id: str
+    history: List[HistoryItem]
+    total_messages: int
+
 # Global variables
 embedding_model = None
 pinecone_index = None
 llm = None
-conversation_history = []
+conversation_sessions = {}  # Store conversation history by session_id
 
-def print_typing_effect(text, color=Colors.WHITE, delay=0.02):
-    """Simulate typing effect for more human-like interaction"""
-    for char in text:
-        sys.stdout.write(color + char + Colors.END)
-        sys.stdout.flush()
-        time.sleep(delay)
-    print()
-
-def print_bot_message(message, typing=True):
-    """Print bot message with styling - output pure Markdown"""
-    print(f"\n{Colors.CYAN}{Colors.BOLD}🤖 Assistant:{Colors.END}\n")
-    
-    # Output pure Markdown without terminal formatting
-    if typing:
-        print_typing_effect(message, Colors.WHITE, delay=0.015)
-    else:
-        print(f"{message}")
-
-def print_user_message(message):
-    """Print user message with styling"""
-    print(f"\n{Colors.GREEN}{Colors.BOLD}You:{Colors.END} {Colors.WHITE}{message}{Colors.END}")
-
-def print_suggestions(suggestions):
-    """Print suggestion chips"""
-    if suggestions:
-        print(f"\n{Colors.YELLOW}💡 Suggestions:{Colors.END}")
-        for i, suggestion in enumerate(suggestions, 1):
-            print(f"   {Colors.PURPLE}{i}.{Colors.END} {suggestion}")
-
-def print_separator():
-    """Print a nice separator line"""
-    print(f"\n{Colors.BLUE}{'─' * 80}{Colors.END}")
-
-def print_welcome_banner():
-    """Print welcome banner"""
-    banner = f"""
-{Colors.CYAN}{Colors.BOLD}
-╔═══════════════════════════════════════════════════════════════════════════╗
-║                                                                           ║
-║          🚀  STARTSMARTZ AI ASSISTANT  🚀                                 ║
-║                                                                           ║
-║          Powered by Advanced RAG Technology                               ║
-║                                                                           ║
-╚═══════════════════════════════════════════════════════════════════════════╝
-{Colors.END}
-"""
-    print(banner)
-
-def initialize_components():
-    """Initialize Pinecone, embeddings, and LLM"""
+@app.on_event("startup")
+async def startup_event():
+    """Initialize Pinecone, embeddings, and LLM on startup"""
     global embedding_model, pinecone_index, llm
-    
-    print(f"\n{Colors.YELLOW}⚙️  Initializing components...{Colors.END}")
     
     try:
         # Check credentials
@@ -104,25 +93,20 @@ def initialize_components():
             raise ValueError(f"❌ {AppConfig.PROVIDER.upper()}_API_KEY not found")
         
         # Initialize Pinecone
-        print(f"{Colors.YELLOW}   → Connecting to Pinecone...{Colors.END}")
         pc = Pinecone(api_key=AppConfig.PINECONE_API_KEY)
         pinecone_index = pc.Index(AppConfig.PINECONE_INDEX_NAME)
-        print(f"{Colors.GREEN}   ✓ Pinecone connected{Colors.END}")
         
         # Initialize embeddings
-        print(f"{Colors.YELLOW}   → Loading embedding model...{Colors.END}")
         embedding_model = HuggingFaceEmbeddings(
             model_name=AppConfig.EMBEDDING_MODEL,
             model_kwargs={'device': 'cpu'},
             encode_kwargs={'normalize_embeddings': True}
         )
-        print(f"{Colors.GREEN}   ✓ Embedding model loaded{Colors.END}")
         
         # Initialize LLM
-        print(f"{Colors.YELLOW}   → Initializing {AppConfig.PROVIDER.upper()} LLM...{Colors.END}")
         if AppConfig.PROVIDER == "gemini":
             llm = ChatGoogleGenerativeAI(
-                model="gemini-2.5-pro",
+                model="gemini-2.0-flash-exp",
                 google_api_key=AppConfig.CREDENTIAL,
                 temperature=0.9
             )
@@ -138,14 +122,17 @@ def initialize_components():
                 cohere_api_key=AppConfig.CREDENTIAL,
                 temperature=0.7
             )
-        print(f"{Colors.GREEN}   ✓ LLM initialized{Colors.END}")
         
-        print(f"\n{Colors.GREEN}{Colors.BOLD}✅ All components initialized successfully!{Colors.END}")
-        return True
+        print("\n" + "="*60)
+        print("✅ RAG Chat components initialized successfully")
+        print(f"✅ Pinecone index '{AppConfig.PINECONE_INDEX_NAME}' connected (gRPC)")
+        print(f"✅ Embedding model: {AppConfig.EMBEDDING_MODEL}")
+        print(f"✅ LLM provider: {AppConfig.PROVIDER}")
+        print("="*60 + "\n")
         
     except Exception as e:
-        print(f"\n{Colors.RED}❌ Initialization error: {e}{Colors.END}")
-        return False
+        print(f"❌ Initialization error: {e}")
+        raise
 
 def classify_query(question: str) -> str:
     """Classify if query needs RAG retrieval or is conversational"""
@@ -170,9 +157,15 @@ def classify_query(question: str) -> str:
     
     return "knowledge_based"
 
-def get_context(query_text: str, top_k: int = 5):
+def get_context(query_text: str, top_k: int = 10):
     """Retrieve relevant context from Pinecone"""
     try:
+        if embedding_model is None or pinecone_index is None:
+            raise HTTPException(
+                status_code=500,
+                detail="RAG components not initialized"
+            )
+        
         query_vector = embedding_model.embed_query(query_text)
         results = pinecone_index.query(
             vector=query_vector,
@@ -198,21 +191,25 @@ def get_context(query_text: str, top_k: int = 5):
                     f"URL: {url}\n"
                     f"Content: {content}"
                 )
-                sources.append({
-                    'page': page_number,
-                    'score': round(match.get('score', 0.0), 4),
-                    'preview': content[:150] + "..." if len(content) > 150 else content
-                })
+                sources.append(SourceInfo(
+                    page=str(page_number),
+                    score=round(match.get('score', 0.0), 4),
+                    preview=content[:150] + "..." if len(content) > 150 else content
+                ))
         
         context = "\n\n".join(context_parts) if context_parts else "No relevant context found."
         return context, sources
         
+    except HTTPException:
+        raise
     except Exception as e:
-        return f"Error retrieving context: {str(e)}", []
+        raise HTTPException(
+            status_code=500,
+            detail=f"Context retrieval error: {str(e)}"
+        )
 
 def generate_conversational_response(query: str):
-    """Generate human-like conversational responses"""
-    
+    """Generate conversational response"""
     prompt = ChatPromptTemplate.from_messages([
         ('system', '''You are an intelligent, friendly AI assistant for Startsmartz Technologies.
 
@@ -272,17 +269,6 @@ Response Guidelines:
 
 IMPORTANT: End conversational responses with a natural closing question or offer to help.
 
-Example Markdown Format:
-Hey there! 👋 Great to hear from you!
-
-I'm your Startsmartz AI assistant, and I'm here to help with anything about our company. Here's what I can do:
-
-- 🚀 **Services & Products:** Tell you all about our offerings
-- 💡 **Insights:** Share company information and policies
-- 🤝 **Support:** Guide you through getting started
-
-What would you like to know?
-
 Always sound like a real person having a genuine conversation, not a scripted bot.
 Output PURE MARKDOWN - no HTML, no terminal codes.'''),
         ('human', '{question}')
@@ -294,9 +280,7 @@ Output PURE MARKDOWN - no HTML, no terminal codes.'''),
     return response, []
 
 def generate_knowledge_response(query: str):
-    """Generate response using RAG"""
-    
-    print(f"{Colors.YELLOW}🔍 Searching knowledge base...{Colors.END}")
+    """Generate knowledge-based response using RAG"""
     context, sources = get_context(query, AppConfig.TOP_K)
     
     prompt = ChatPromptTemplate.from_messages([
@@ -371,32 +355,6 @@ Critical Requirements:
 - ALWAYS end with a thoughtful paragraph offering to dig deeper
 - Output PURE MARKDOWN - no HTML tags, no terminal color codes
 
-Example Response:
-# Startsmartz Technologies: An Overview
-
-Startsmartz Technologies is a forward-thinking company focused on delivering innovative solutions that drive business success.
-
-## Core Mission
-
-- 🎯 **Purpose:** To deliver user-friendly software and smart branding that fuels business growth through reliable, timely solutions.
-- ✨ **Values:** Clear communication, continuous learning, and a commitment to excellence in every project.
-
-## Innovation & Excellence
-
-The company designs solutions to solve complex problems, boost efficiency, and ensure long-term success for both startups and established enterprises through strategic thinking and practical expertise.
-
-### Key Strengths
-
-1. 🚀 **Strategic Approach:** Combining innovation with practical business needs
-2. 💻 **Technical Excellence:** Building scalable, efficient solutions
-3. 🤝 **Client Focus:** Prioritizing user needs and business outcomes
-
-## My Assessment
-
-Startsmartz positions itself as a comprehensive technology partner that bridges the gap between innovation and practical business value.
-
-If you'd like, I can explore their specific service offerings, dive into their technology stack, or analyze their market positioning. Would any of that be helpful?
-
 ENTIRE RESPONSE MUST BE PURE MARKDOWN WITH STRATEGIC EMOJI USE.'''),
         ('human', '''Question: "{question}"
 
@@ -412,108 +370,164 @@ Please provide a comprehensive, insightful answer in pure Markdown format with n
         "context": context
     })
     
-    return response, []
+    return response, sources
 
-def process_query(query: str):
-    """Process user query and generate response"""
-    query_type = classify_query(query)
-    
-    # Add thinking animation
-    thinking_messages = [
-        "Thinking", "Processing", "Analyzing", "Understanding"
-    ]
-    thinking_msg = random.choice(thinking_messages)
-    
-    sys.stdout.write(f"\n{Colors.YELLOW}{thinking_msg}")
-    for _ in range(3):
-        time.sleep(0.3)
-        sys.stdout.write(".")
-        sys.stdout.flush()
-    print(f"{Colors.END}")
-    
+@app.post("/query", response_model=ChatResponse)
+async def query(request: ChatRequest):
+    """Process query and return AI response"""
     try:
+        if llm is None:
+            raise HTTPException(
+                status_code=500,
+                detail="LLM not initialized"
+            )
+        
+        # Classify query type
+        query_type = classify_query(request.query)
+        
+        # Generate response based on query type
         if query_type == "conversational":
-            response, suggestions = generate_conversational_response(query)
+            response, sources = generate_conversational_response(request.query)
         else:
-            response, suggestions = generate_knowledge_response(query)
+            response, sources = generate_knowledge_response(request.query)
         
-        # Save to history
-        conversation_history.append({
-            'timestamp': datetime.now(),
-            'user': query,
-            'assistant': response,
-            'type': query_type
-        })
+        # Store in conversation history if session_id provided
+        timestamp = datetime.now().isoformat()
+        if request.session_id:
+            if request.session_id not in conversation_sessions:
+                conversation_sessions[request.session_id] = []
+            
+            conversation_sessions[request.session_id].append({
+                'timestamp': timestamp,
+                'user_message': request.query,
+                'assistant_response': response,
+                'query_type': query_type
+            })
         
-        return response, suggestions
+        return ChatResponse(
+            response=response,
+            query_type=query_type,
+            sources=sources if sources else None,
+            timestamp=timestamp,
+            session_id=request.session_id
+        )
         
+    except HTTPException:
+        raise
     except Exception as e:
-        error_response = f"Oops! I encountered an issue: {str(e)}\n\nLet me try to help you another way. Could you rephrase your question?"
-        return error_response, []
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error processing chat: {str(e)}"
+        )
 
-def chat_loop():
-    """Main chat loop"""
-    print_welcome_banner()
+@app.post("/history", response_model=ChatHistoryResponse)
+async def get_chat_history(request: ChatHistoryRequest):
+    """Retrieve chat history for a session"""
+    if request.session_id not in conversation_sessions:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No conversation history found for session: {request.session_id}"
+        )
     
-    if not initialize_components():
-        print(f"\n{Colors.RED}Failed to initialize. Please check your configuration.{Colors.END}")
-        return
+    history = conversation_sessions[request.session_id]
     
-    print_separator()
-    
-    # Welcome message
-    welcome_msg = """Hey there! 👋 I'm your Startsmartz AI assistant, and I'm really excited to chat with you today!
+    return ChatHistoryResponse(
+        session_id=request.session_id,
+        history=[
+            HistoryItem(
+                timestamp=item['timestamp'],
+                user_message=item['user_message'],
+                assistant_response=item['assistant_response'],
+                query_type=item['query_type']
+            )
+            for item in history
+        ],
+        total_messages=len(history)
+    )
 
-I'm here to help with anything about Startsmartz Technologies - our products, services, policies, you name it. I use advanced RAG technology to give you accurate, helpful information from our knowledge base.
+@app.delete("/history/{session_id}")
+async def clear_chat_history(session_id: str):
+    """Clear chat history for a session"""
+    if session_id in conversation_sessions:
+        del conversation_sessions[session_id]
+        return {"message": f"History cleared for session: {session_id}"}
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No conversation history found for session: {session_id}"
+        )
 
-Feel free to ask me anything, or just say hi! What would you like to know?"""
-    
-    print_bot_message(welcome_msg, typing=True)
-    print_separator()
-    
-    # Chat loop
-    while True:
-        try:
-            # Get user input
-            user_input = input(f"\n{Colors.GREEN}{Colors.BOLD}You:{Colors.END} {Colors.WHITE}").strip()
-            print(Colors.END, end='')
-            
-            if not user_input:
-                continue
-            
-            # Check for exit commands
-            if user_input.lower() in ['exit', 'quit', 'bye', 'goodbye']:
-                farewell = "It was wonderful chatting with you! 🌟 Feel free to come back anytime you have questions about Startsmartz. Have an amazing day! 👋"
-                print_bot_message(farewell, typing=True)
-                print_separator()
-                break
-            
-            # Process query
-            response, suggestions = process_query(user_input)
-            
-            # Display response (pure Markdown)
-            print_bot_message(response, typing=True)
-            
-            # Display suggestions if any
-            if suggestions:
-                print_suggestions(suggestions)
-            
-            print_separator()
-            
-        except KeyboardInterrupt:
-            print(f"\n\n{Colors.YELLOW}Chat interrupted. Goodbye! 👋{Colors.END}\n")
-            break
-        except Exception as e:
-            print(f"\n{Colors.RED}An error occurred: {e}{Colors.END}")
-            continue
+@app.get("/sessions")
+async def list_sessions():
+    """List all active conversation sessions"""
+    return {
+        "active_sessions": list(conversation_sessions.keys()),
+        "total_sessions": len(conversation_sessions)
+    }
 
-def main():
-    """Main entry point"""
-    try:
-        chat_loop()
-    except Exception as e:
-        print(f"\n{Colors.RED}Fatal error: {e}{Colors.END}")
-        sys.exit(1)
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "embedding_model": "loaded" if embedding_model else "not loaded",
+        "pinecone_index": "connected" if pinecone_index else "not connected",
+        "llm": "initialized" if llm else "not initialized",
+        "config": {
+            "provider": AppConfig.PROVIDER,
+            "top_k": AppConfig.TOP_K,
+            "index_name": AppConfig.PINECONE_INDEX_NAME,
+            "client_type": "gRPC"
+        },
+        "active_sessions": len(conversation_sessions)
+    }
+
+@app.get("/")
+async def root():
+    """Root endpoint with API information"""
+    return {
+        "message": "Startsmartz RAG Chat API",
+        "version": "2.0.0",
+        "description": "Interactive RAG-powered conversational AI with knowledge retrieval",
+        "features": [
+            "Conversational AI with personality",
+            "Knowledge-based RAG retrieval",
+            "Session-based chat history",
+            "Markdown-formatted responses with emojis",
+            "Multi-source context retrieval"
+        ],
+        "endpoints": {
+            "/query": "POST - Send a query message",
+            "/history": "POST - Get chat history for a session",
+            "/history/{session_id}": "DELETE - Clear chat history",
+            "/sessions": "GET - List active sessions",
+            "/health": "GET - Health check",
+            "/docs": "GET - Interactive API documentation"
+        }
+    }
 
 if __name__ == "__main__":
-    main()
+    port = int(os.getenv("PORT", "8020"))
+    local_port = int(os.getenv("LOCAL_PORT", str(port)))
+
+    # Optional ngrok for local development
+    if os.getenv("USE_NGROK", "true").lower() in ("1", "true", "yes"):
+        try:
+            from pyngrok import ngrok
+            import nest_asyncio
+
+            public_url = ngrok.connect(local_port)
+            print("\n" + "="*60)
+            print("🌐 Startsmartz RAG Chat API")
+            print("="*60)
+            print(f"🔗 Public URL: {public_url.public_url}")
+            print(f"📚 API Docs: {public_url.public_url}/docs")
+            print(f"💬 Query Endpoint: {public_url.public_url}/query")
+            print(f"🔍 Health Check: {public_url.public_url}/health")
+            print("="*60 + "\n")
+
+            nest_asyncio.apply()
+        except Exception as e:
+            print("ngrok setup skipped or failed:", e)
+
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
