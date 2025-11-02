@@ -1,151 +1,149 @@
-from pinecone.grpc import PineconeGRPC as Pinecone
+from pinecone.grpc import PineconeGRPC as Pinecone  # Changed to gRPC client
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from langchain_cohere import ChatCohere
+from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict
+from enum import Enum
+import uvicorn
+import httpx
 import os
-import sys
-import time
-import random
 from dotenv import load_dotenv
-from datetime import datetime
 
 load_dotenv()
 
-# ANSI color codes for terminal (only for UI elements, not response content)
-class Colors:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    WHITE = '\033[97m'
-    BOLD = '\033[1m'
-    END = '\033[0m'
+# Initialize FastAPI app
+app = FastAPI(
+    title="RAG Assistant API",
+    description="Enterprise RAG API with multi-provider support and credential validation",
+    version="1.0.0"
+)
 
-# Configuration
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Enums
+class ProviderEnum(str, Enum):
+    gemini = "gemini"
+    openai = "openai"
+    cohere = "cohere"
+
+# Request Models
+class QueryRequest(BaseModel):
+    query: str = Field(..., description="User query text", min_length=1)
+
+# Response Models
+class SourceMatch(BaseModel):
+    id: str
+    page_number: str  # Changed from url
+    score: float
+    preview: str
+
+class QueryResponse(BaseModel):
+    status: str = Field(..., description="Status from validator or processing")
+    message: str = Field(..., description="Message describing the status")
+    content: str = Field(default="", description="Generated response content")
+    sources: Optional[List[SourceMatch]] = Field(default=None, description="Retrieved context sources")
+
+# Global variables for RAG components
+embedding_model = None
+pinecone_index = None
+
+# CONSTANT CONFIGURATION
 class AppConfig:
     PROVIDER = "gemini"
     CREDENTIAL = os.getenv("GOOGLE_API_KEY")
+    VALIDATOR_URL = "https://provider-credential-validdator.onrender.com/validate"
     TOP_K = int(os.getenv("TOP_K", "10"))
     PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-    PINECONE_INDEX_NAME = "startsmartz"
+    PINECONE_INDEX_NAME = "startsmartz-web"
     EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
-# Global variables
-embedding_model = None
-pinecone_index = None
-llm = None
-conversation_history = []
-
-def print_typing_effect(text, color=Colors.WHITE, delay=0.02):
-    """Simulate typing effect for more human-like interaction"""
-    for char in text:
-        sys.stdout.write(color + char + Colors.END)
-        sys.stdout.flush()
-        time.sleep(delay)
-    print()
-
-def print_bot_message(message, typing=True):
-    """Print bot message with styling - output pure Markdown"""
-    print(f"\n{Colors.CYAN}{Colors.BOLD}🤖 Assistant:{Colors.END}\n")
-    
-    # Output pure Markdown without terminal formatting
-    if typing:
-        print_typing_effect(message, Colors.WHITE, delay=0.015)
-    else:
-        print(f"{message}")
-
-def print_user_message(message):
-    """Print user message with styling"""
-    print(f"\n{Colors.GREEN}{Colors.BOLD}You:{Colors.END} {Colors.WHITE}{message}{Colors.END}")
-
-def print_suggestions(suggestions):
-    """Print suggestion chips"""
-    if suggestions:
-        print(f"\n{Colors.YELLOW}💡 Suggestions:{Colors.END}")
-        for i, suggestion in enumerate(suggestions, 1):
-            print(f"   {Colors.PURPLE}{i}.{Colors.END} {suggestion}")
-
-def print_separator():
-    """Print a nice separator line"""
-    print(f"\n{Colors.BLUE}{'─' * 80}{Colors.END}")
-
-def print_welcome_banner():
-    """Print welcome banner"""
-    banner = f"""
-{Colors.CYAN}{Colors.BOLD}
-╔═══════════════════════════════════════════════════════════════════════════╗
-║                                                                           ║
-║          🚀  STARTSMARTZ AI ASSISTANT  🚀                                 ║
-║                                                                           ║
-║          Powered by Advanced RAG Technology                               ║
-║                                                                           ║
-╚═══════════════════════════════════════════════════════════════════════════╝
-{Colors.END}
-"""
-    print(banner)
-
-def initialize_components():
-    """Initialize Pinecone, embeddings, and LLM"""
-    global embedding_model, pinecone_index, llm
-    
-    print(f"\n{Colors.YELLOW}⚙️  Initializing components...{Colors.END}")
+@app.on_event("startup")
+async def startup_event():
+    """Initialize Pinecone and embedding model on startup"""
+    global embedding_model, pinecone_index
     
     try:
-        # Check credentials
         if not AppConfig.PINECONE_API_KEY:
             raise ValueError("❌ PINECONE_API_KEY not found in environment variables")
         
         if not AppConfig.CREDENTIAL:
-            raise ValueError(f"❌ {AppConfig.PROVIDER.upper()}_API_KEY not found")
+            raise ValueError(f"❌ {AppConfig.PROVIDER.upper()}_API_KEY not found in environment variables")
         
-        # Initialize Pinecone
-        print(f"{Colors.YELLOW}   → Connecting to Pinecone...{Colors.END}")
-        pc = Pinecone(api_key=AppConfig.PINECONE_API_KEY)
+        # Initialize Pinecone with gRPC
+        pc = Pinecone(api_key=AppConfig.PINECONE_API_KEY)  # Now using gRPC client
         pinecone_index = pc.Index(AppConfig.PINECONE_INDEX_NAME)
-        print(f"{Colors.GREEN}   ✓ Pinecone connected{Colors.END}")
         
-        # Initialize embeddings
-        print(f"{Colors.YELLOW}   → Loading embedding model...{Colors.END}")
+        # Initialize HuggingFace embeddings
         embedding_model = HuggingFaceEmbeddings(
             model_name=AppConfig.EMBEDDING_MODEL,
             model_kwargs={'device': 'cpu'},
             encode_kwargs={'normalize_embeddings': True}
         )
-        print(f"{Colors.GREEN}   ✓ Embedding model loaded{Colors.END}")
         
-        # Initialize LLM
-        print(f"{Colors.YELLOW}   → Initializing {AppConfig.PROVIDER.upper()} LLM...{Colors.END}")
-        if AppConfig.PROVIDER == "gemini":
-            llm = ChatGoogleGenerativeAI(
-                model="gemini-2.5-pro",
-                google_api_key=AppConfig.CREDENTIAL,
-                temperature=0.9
-            )
-        elif AppConfig.PROVIDER == "openai":
-            llm = ChatOpenAI(
-                model="gpt-4o-mini",
-                api_key=AppConfig.CREDENTIAL,
-                temperature=0.7
-            )
-        elif AppConfig.PROVIDER == "cohere":
-            llm = ChatCohere(
-                model="command-r-plus",
-                cohere_api_key=AppConfig.CREDENTIAL,
-                temperature=0.7
-            )
-        print(f"{Colors.GREEN}   ✓ LLM initialized{Colors.END}")
-        
-        print(f"\n{Colors.GREEN}{Colors.BOLD}✅ All components initialized successfully!{Colors.END}")
-        return True
+        print("\n" + "="*60)
+        print("✅ RAG components initialized successfully")
+        print(f"✅ Pinecone index '{AppConfig.PINECONE_INDEX_NAME}' connected (gRPC)")
+        print(f"✅ Embedding model: {AppConfig.EMBEDDING_MODEL}")
+        print(f"✅ Default provider: {AppConfig.PROVIDER}")
+        print(f"✅ Validator URL: {AppConfig.VALIDATOR_URL}")
+        print("="*60 + "\n")
         
     except Exception as e:
-        print(f"\n{Colors.RED}❌ Initialization error: {e}{Colors.END}")
-        return False
+        print(f"❌ Initialization error: {e}")
+        raise
+
+async def validate_credential(provider: str, credential: str, validator_url: str) -> dict:
+    """Call external validator API to check if credential is valid"""
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                validator_url,
+                json={
+                    "provider": provider,
+                    "api_key": credential
+                }
+            )
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return {
+                    "status": "error",
+                    "message": f"❌ Validator API returned status code {response.status_code}",
+                    "details": response.text
+                }
+                
+    except httpx.TimeoutException:
+        return {
+            "status": "error",
+            "message": "❌ Validator API request timed out",
+            "details": "The validator API did not respond within 30 seconds"
+        }
+    except httpx.RequestError as e:
+        return {
+            "status": "error",
+            "message": "❌ Failed to connect to validator API",
+            "details": str(e)
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": "❌ Unexpected error during validation",
+            "details": str(e)
+        }
 
 def classify_query(question: str) -> str:
     """Classify if query needs RAG retrieval or is conversational"""
@@ -170,350 +168,277 @@ def classify_query(question: str) -> str:
     
     return "knowledge_based"
 
-def get_context(query_text: str, top_k: int = 5):
-    """Retrieve relevant context from Pinecone"""
+def get_context(query_text: str, top_k: int = 3) -> tuple:
+    """
+    Retrieve relevant context from Pinecone using embeddings
+    
+    Args:
+        query_text: User query string
+        top_k: Number of top results to retrieve
+        
+    Returns:
+        tuple: (context_string, list_of_matches)
+    """
     try:
+        if embedding_model is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Embedding model not initialized"
+            )
+        
+        if pinecone_index is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Pinecone index not initialized"
+            )
+        
+        # Generate query embedding
         query_vector = embedding_model.embed_query(query_text)
+        
+        # Query Pinecone
         results = pinecone_index.query(
             vector=query_vector,
             top_k=top_k,
             include_metadata=True
         )
         
+        # Check if we got results
         if not results.get('matches'):
             return "No relevant context found.", []
         
+        # Format context MATCHING STREAMLIT LOGIC
         context_parts = []
-        sources = []
+        matches_list = []
         
-        for match in results['matches']:
+        for i, match in enumerate(results['matches']):
             metadata = match.get('metadata', {})
+            
+            # Use the CORRECT field names from your Pinecone data
             page_number = metadata.get('page_number', 'N/A')
             url = metadata.get('url', 'N/A')
-            content = metadata.get('content', '')
+            content = metadata.get('content', '')  # Changed from 'text' to 'content'
             
             if content:
+                # Format context exactly like Streamlit
                 context_parts.append(
                     f"Page Number: {page_number}\n"
                     f"URL: {url}\n"
                     f"Content: {content}"
                 )
-                sources.append({
-                    'page': page_number,
-                    'score': round(match.get('score', 0.0), 4),
-                    'preview': content[:150] + "..." if len(content) > 150 else content
-                })
+                
+                matches_list.append(
+                    SourceMatch(
+                        id=match.get('id', 'Unknown'),
+                        page_number=str(page_number),  # Changed from url to page_number
+                        score=round(match.get('score', 0.0), 4),
+                        preview=content[:200] + "..." if len(content) > 200 else content
+                    )
+                )
         
         context = "\n\n".join(context_parts) if context_parts else "No relevant context found."
-        return context, sources
         
+        return context, matches_list
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        return f"Error retrieving context: {str(e)}", []
+        raise HTTPException(
+            status_code=500,
+            detail=f"Context retrieval error: {str(e)}"
+        )
 
-def generate_conversational_response(query: str):
-    """Generate human-like conversational responses"""
+def initialize_llm(provider: str, credential: str):
+    """Initialize LLM based on provider and credential"""
+    try:
+        if provider == "gemini":
+            llm = ChatGoogleGenerativeAI(
+                model="gemini-2.0-flash-exp",
+                google_api_key=credential,
+                temperature=0.7
+            )
+        elif provider == "openai":
+            llm = ChatOpenAI(
+                model="gpt-4o-mini",
+                api_key=credential,
+                temperature=0.7
+            )
+        elif provider == "cohere":
+            llm = ChatCohere(
+                model="command-r-plus",
+                cohere_api_key=credential,
+                temperature=0.7
+            )
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported provider: {provider}"
+            )
+        
+        return llm
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"LLM initialization failed: {str(e)}"
+        )
+
+@app.post("/query", response_model=QueryResponse)
+async def process_query(request: QueryRequest):
+    """Process query with RAG pipeline"""
     
-    prompt = ChatPromptTemplate.from_messages([
-        ('system', '''You are an intelligent, friendly AI assistant for Startsmartz Technologies.
-
-Response Format - ABSOLUTELY CRITICAL:
-YOU MUST FORMAT YOUR ENTIRE RESPONSE IN PURE MARKDOWN WITH EMOJIS/ICONS.
-
-Required Markdown Format with Icons:
-Use emojis and icons strategically to make responses engaging and visual:
-- 🎯 for key points or focus areas
-- ✨ for features or highlights
-- 💡 for insights or tips
-- 🚀 for capabilities or services
-- 📊 for data/analytics related
-- 🔧 for technical details
-- 💼 for business aspects
-- 🌟 for special mentions
-- ✅ for confirmations
-- 📝 for documentation/details
-- 🤝 for partnerships/collaboration
-- 💻 for technology
-- 🎨 for design/creative
-- 📱 for mobile/apps
-- 🔒 for security
-- ⚡ for performance/speed
-
-Structure your response with proper markdown:
-# Main Title (when appropriate)
-## Section Title
-### Subsection
-
-Use **bold** for emphasis
-Use *italic* for subtle emphasis
-Use `code` for technical terms
-
-Use bullet points with icons:
-- 🎯 **Point title:** Description
-- ✨ **Another point:** More details
+    provider = AppConfig.PROVIDER
+    credential = AppConfig.CREDENTIAL
+    validator_url = AppConfig.VALIDATOR_URL
+    top_k = AppConfig.TOP_K
+    
+    # Validate credential
+    validation_result = await validate_credential(
+        provider=provider,
+        credential=credential,
+        validator_url=validator_url
+    )
+    
+    if validation_result["status"] != "success":
+        return QueryResponse(
+            status=validation_result["status"],
+            message=validation_result["message"],
+            content="",
+            sources=None
+        )
+    
+    try:
+        llm = initialize_llm(provider, credential)
+        query_type = classify_query(request.query)
+        output_parser = StrOutputParser()
+        
+        if query_type == "conversational":
+            conversational_prompt = ChatPromptTemplate.from_messages([
+                ('system', '''You are an intelligent, enterprise-grade AI assistant for Startsmartz Technologies.
 
 Core Identity:
-- You represent Startsmartz Technologies with warmth and professionalism
-- You were developed by Startsmartz Technologies' AI team
-- You help with questions about products, services, policies, and operations
+- You represent Startsmartz Technologies and provide helpful assistance.
+- You were developed by Startsmartz Technologies' AI team.
+- Your primary purpose is to answer questions about the company's products, services, policies, and operations.
 
-Personality & Tone:
-- Be conversational, warm, and personable - like talking to a helpful colleague
-- Use natural language with emojis and icons to make it visual and engaging
-- Show enthusiasm and genuine interest in helping
-- Be concise but thorough - aim for 2-4 sentences for greetings, more for detailed questions
-- Add personal touches like "I'd love to help you with that!" or "Great question!"
+Response Guidelines for Greetings & Conversational Queries:
+- Respond warmly and professionally to greetings like "Hi", "Hello", "How are you".
+- When asked "Who are you?": Explain you're an AI assistant for Startsmartz Technologies Ltd designed to help with company-related information.
+- When asked "Who developed you?": Mention you were developed by Startsmartz Technologies.
+- When asked about your capabilities: Explain you can answer questions about Startsmartz Technologies's products, services, policies, and general company information.
 
-Response Guidelines:
-- For greetings: Respond warmly and offer help
-- For identity questions: Explain who you are with personality
-- For capability questions: Share what you can do enthusiastically  
-- For thanks: Be gracious and offer continued assistance
-- For goodbyes: Be warm and welcoming for future conversations
-
-IMPORTANT: End conversational responses with a natural closing question or offer to help.
-
-Example Markdown Format:
-Hey there! 👋 Great to hear from you!
-
-I'm your Startsmartz AI assistant, and I'm here to help with anything about our company. Here's what I can do:
-
-- 🚀 **Services & Products:** Tell you all about our offerings
-- 💡 **Insights:** Share company information and policies
-- 🤝 **Support:** Guide you through getting started
-
-What would you like to know?
-
-Always sound like a real person having a genuine conversation, not a scripted bot.
-Output PURE MARKDOWN - no HTML, no terminal codes.'''),
-        ('human', '{question}')
-    ])
-    
-    chain = prompt | llm | StrOutputParser()
-    response = chain.invoke({"question": query})
-    
-    return response, []
-
-def generate_knowledge_response(query: str):
-    """Generate response using RAG"""
-    
-    print(f"{Colors.YELLOW}🔍 Searching knowledge base...{Colors.END}")
-    context, sources = get_context(query, AppConfig.TOP_K)
-    
-    prompt = ChatPromptTemplate.from_messages([
-        ('system', '''You are a knowledgeable, insightful AI assistant for Startsmartz Technologies.
-
-Response Format - ABSOLUTELY CRITICAL:
-YOU MUST FORMAT YOUR ENTIRE RESPONSE IN PURE MARKDOWN WITH STRATEGIC USE OF EMOJIS/ICONS.
-
-Icon Guide (use these strategically):
-- 🎯 Key points/focus areas
-- ✨ Features/highlights
-- 💡 Insights/understanding
-- 🚀 Services/capabilities
-- 📊 Data/analytics
-- 🔧 Technical details
-- 💼 Business aspects
-- 🌟 Special mentions
-- ✅ Confirmations/positives
-- 📝 Documentation
-- 🤝 Partnerships
-- 💻 Technology
-- 🎨 Design/creative
-- 📱 Mobile/apps
-- 🔒 Security
-- ⚡ Performance/speed
-- 🏢 Company/organization
-- 🌍 Global/reach
-- 👥 Team/people
-- 📈 Growth/progress
-
-Required Markdown Structure:
-# Main Title
-
-Opening paragraph introducing the topic.
-
-## Section Title
-
-Use bullet points with icons and bold text:
-- 🎯 **Key concept:** Explanation with supporting details that provide depth and context.
-- ✨ **Another aspect:** More information here with thorough coverage.
-
-Continue with natural paragraphs for analysis and insights.
-
-### Subsection Title
-
-More detailed breakdown here.
-
-Use numbered lists when showing steps or priorities:
-1. 🔧 **First thing:** Details about this aspect
-2. 📊 **Second area:** More information here
-
-## My Assessment
-
-Final thoughts, analysis, and interpretation.
-
-If you'd like, I can [specific offer 1], [specific offer 2], or [specific offer 3]. Would any of that be helpful?
-
-Response Style:
-- Write in a natural, analytical yet conversational tone
-- Structure your response with clear markdown headers (#, ##, ###)
-- Use bullet points with icons for visual appeal and clarity
-- Use **bold** for emphasis on key terms and concepts
-- Balance factual information with thoughtful analysis
-- Be thorough but not overwhelming
-
-Critical Requirements:
-- Base your response ONLY on the provided context from the knowledge base
-- If information is incomplete, acknowledge it honestly and suggest areas to explore
-- Don't cite sources or mention "according to documentation"
-- Use proper markdown formatting throughout
-- Add relevant emojis/icons to section headers and bullet points
-- ALWAYS end with a thoughtful paragraph offering to dig deeper
-- Output PURE MARKDOWN - no HTML tags, no terminal color codes
-
-Example Response:
-# Startsmartz Technologies: An Overview
-
-Startsmartz Technologies is a forward-thinking company focused on delivering innovative solutions that drive business success.
-
-## Core Mission
-
-- 🎯 **Purpose:** To deliver user-friendly software and smart branding that fuels business growth through reliable, timely solutions.
-- ✨ **Values:** Clear communication, continuous learning, and a commitment to excellence in every project.
-
-## Innovation & Excellence
-
-The company designs solutions to solve complex problems, boost efficiency, and ensure long-term success for both startups and established enterprises through strategic thinking and practical expertise.
-
-### Key Strengths
-
-1. 🚀 **Strategic Approach:** Combining innovation with practical business needs
-2. 💻 **Technical Excellence:** Building scalable, efficient solutions
-3. 🤝 **Client Focus:** Prioritizing user needs and business outcomes
-
-## My Assessment
-
-Startsmartz positions itself as a comprehensive technology partner that bridges the gap between innovation and practical business value.
-
-If you'd like, I can explore their specific service offerings, dive into their technology stack, or analyze their market positioning. Would any of that be helpful?
-
-ENTIRE RESPONSE MUST BE PURE MARKDOWN WITH STRATEGIC EMOJI USE.'''),
-        ('human', '''Question: "{question}"
-
-Context from our knowledge base:
-{context}
-
-Please provide a comprehensive, insightful answer in pure Markdown format with natural follow-up suggestions at the end.''')
-    ])
-    
-    chain = prompt | llm | StrOutputParser()
-    response = chain.invoke({
-        "question": query,
-        "context": context
-    })
-    
-    return response, []
-
-def process_query(query: str):
-    """Process user query and generate response"""
-    query_type = classify_query(query)
-    
-    # Add thinking animation
-    thinking_messages = [
-        "Thinking", "Processing", "Analyzing", "Understanding"
-    ]
-    thinking_msg = random.choice(thinking_messages)
-    
-    sys.stdout.write(f"\n{Colors.YELLOW}{thinking_msg}")
-    for _ in range(3):
-        time.sleep(0.3)
-        sys.stdout.write(".")
-        sys.stdout.flush()
-    print(f"{Colors.END}")
-    
-    try:
-        if query_type == "conversational":
-            response, suggestions = generate_conversational_response(query)
+Tone & Style:
+- Professional yet conversational and friendly.
+- Clear and concise.
+- Helpful and welcoming.'''),
+                ('human', '{question}')
+            ])
+            
+            chain = conversational_prompt | llm | output_parser
+            response = chain.invoke({"question": request.query})
+            
+            return QueryResponse(
+                status="success",
+                message="✅ Query processed successfully",
+                content=response,
+                sources=None
+            )
+        
         else:
-            response, suggestions = generate_knowledge_response(query)
-        
-        # Save to history
-        conversation_history.append({
-            'timestamp': datetime.now(),
-            'user': query,
-            'assistant': response,
-            'type': query_type
-        })
-        
-        return response, suggestions
-        
+            # UPDATED PROMPT TO MATCH STREAMLIT FORMAT
+            knowledge_prompt = ChatPromptTemplate.from_messages([
+                ('system', 'You are a Smart AI RAG-based assistant. Please answer the query based on the question.'),
+                ('human', '''Answer the question "{question}" based **only** on the provided context: {context}.
+            If the content is insufficient, say "I don't have enough knowledge based on the document."''')
+            ])
+
+            
+            chain = knowledge_prompt | llm | output_parser
+            
+            # Get context from Pinecone
+            context, matches = get_context(request.query, top_k)
+            
+            # Generate response
+            response = chain.invoke({
+                "question": request.query,
+                "context": context
+            })
+            
+            return QueryResponse(
+                status="success",
+                message="✅ Query processed successfully",
+                content=response,
+                sources=matches if matches else None
+            )
+    
+    except HTTPException as he:
+        raise he
+    
     except Exception as e:
-        error_response = f"Oops! I encountered an issue: {str(e)}\n\nLet me try to help you another way. Could you rephrase your question?"
-        return error_response, []
+        print(f"Error processing query: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"An error occurred while processing your query: {str(e)}"
+        )
 
-def chat_loop():
-    """Main chat loop"""
-    print_welcome_banner()
-    
-    if not initialize_components():
-        print(f"\n{Colors.RED}Failed to initialize. Please check your configuration.{Colors.END}")
-        return
-    
-    print_separator()
-    
-    # Welcome message
-    welcome_msg = """Hey there! 👋 I'm your Startsmartz AI assistant, and I'm really excited to chat with you today!
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "embedding_model": "loaded" if embedding_model else "not loaded",
+        "pinecone_index": "connected" if pinecone_index else "not connected",
+        "config": {
+            "provider": AppConfig.PROVIDER,
+            "validator_url": AppConfig.VALIDATOR_URL,
+            "top_k": AppConfig.TOP_K,
+            "index_name": AppConfig.PINECONE_INDEX_NAME,
+            "client_type": "gRPC"
+        }
+    }
 
-I'm here to help with anything about Startsmartz Technologies - our products, services, policies, you name it. I use advanced RAG technology to give you accurate, helpful information from our knowledge base.
-
-Feel free to ask me anything, or just say hi! What would you like to know?"""
-    
-    print_bot_message(welcome_msg, typing=True)
-    print_separator()
-    
-    # Chat loop
-    while True:
-        try:
-            # Get user input
-            user_input = input(f"\n{Colors.GREEN}{Colors.BOLD}You:{Colors.END} {Colors.WHITE}").strip()
-            print(Colors.END, end='')
-            
-            if not user_input:
-                continue
-            
-            # Check for exit commands
-            if user_input.lower() in ['exit', 'quit', 'bye', 'goodbye']:
-                farewell = "It was wonderful chatting with you! 🌟 Feel free to come back anytime you have questions about Startsmartz. Have an amazing day! 👋"
-                print_bot_message(farewell, typing=True)
-                print_separator()
-                break
-            
-            # Process query
-            response, suggestions = process_query(user_input)
-            
-            # Display response (pure Markdown)
-            print_bot_message(response, typing=True)
-            
-            # Display suggestions if any
-            if suggestions:
-                print_suggestions(suggestions)
-            
-            print_separator()
-            
-        except KeyboardInterrupt:
-            print(f"\n\n{Colors.YELLOW}Chat interrupted. Goodbye! 👋{Colors.END}\n")
-            break
-        except Exception as e:
-            print(f"\n{Colors.RED}An error occurred: {e}{Colors.END}")
-            continue
-
-def main():
-    """Main entry point"""
-    try:
-        chat_loop()
-    except Exception as e:
-        print(f"\n{Colors.RED}Fatal error: {e}{Colors.END}")
-        sys.exit(1)
+@app.get("/")
+async def root():
+    """Root endpoint with API information"""
+    return {
+        "message": "RAG Assistant API with Credential Validation",
+        "version": "1.0.0",
+        "vector_database": "Pinecone (gRPC)",
+        "embedding_model": AppConfig.EMBEDDING_MODEL,
+        "default_provider": AppConfig.PROVIDER,
+        "endpoints": {
+            "/query": "POST - Process user query with RAG (only 'query' field required)",
+            "/health": "GET - Health check",
+            "/docs": "GET - Interactive API documentation"
+        }
+    }
 
 if __name__ == "__main__":
-    main()
+    # Determine server port first so ngrok (if used) forwards to the
+    # actual port the server will listen on. You can override PORT or
+    # LOCAL_PORT via environment variables. LOCAL_PORT takes precedence
+    # for the ngrok tunnel if explicitly set, otherwise it defaults to
+    # the server PORT.
+    port = int(os.getenv("PORT", "8010"))
+    # If LOCAL_PORT is set, use it for ngrok; otherwise default to server port
+    local_port = int(os.getenv("LOCAL_PORT", str(port)))
+
+    # Optional ngrok for local development. Enable by setting USE_NGROK=true
+    if os.getenv("USE_NGROK", "true").lower() in ("1", "true", "yes"):
+        try:
+            from pyngrok import ngrok
+            import nest_asyncio
+
+            public_url = ngrok.connect(local_port)
+            print("\n" + "="*60)
+            print(f"🌐 Public URL: {public_url.public_url}")
+            print(f"📚 API Docs: {public_url.public_url}/docs")
+            print(f"🔍 Health Check: {public_url.public_url}/health")
+            print("="*60 + "\n")
+
+            nest_asyncio.apply()
+        except Exception as e:
+            print("ngrok setup skipped or failed:", e)
+
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
