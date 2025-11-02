@@ -154,11 +154,12 @@ with open(output_path, "w", encoding="utf-8") as f:
 
 print(f"\n✅ Saved all content to {output_path}")
 
-# Show sample
-if all_documents:
-    print(f"\n📝 Sample from first page:")
-    print(f"  URL: {all_documents[0]['url']}")
-    print(f"  Content length: {len(all_documents[0]['content'])} characters")
-    print(f"  Preview: {all_documents[0]['content'][:500]}...")
-else:
-    print("\n⚠️ No content was extracted. Check your URLs and internet connection.")
+# # Show sample
+# if all_documents:
+#     print(f"\n📝 Sample from first page:")
+#     print(f"  URL: {all_documents[0]['url']}")
+#     print(f"  Content length: {len(all_documents[0]['content'])} characters")
+#     print(f"  Preview: {all_documents[0]['content'][:500]}...")
+# else:
+#     print("\n⚠️ No content was extracted. Check your URLs and internet connection.")
+

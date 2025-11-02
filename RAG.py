@@ -67,7 +67,7 @@ class AppConfig:
     VALIDATOR_URL = "https://provider-credential-validdator.onrender.com/validate"
     TOP_K = int(os.getenv("TOP_K", "10"))
     PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-    PINECONE_INDEX_NAME = "startsmartz-web"
+    PINECONE_INDEX_NAME = "startsmartz"
     EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 @app.on_event("startup")
@@ -252,7 +252,7 @@ def initialize_llm(provider: str, credential: str):
     try:
         if provider == "gemini":
             llm = ChatGoogleGenerativeAI(
-                model="gemini-2.0-flash-exp",
+                model="gemini-2.5-pro",
                 google_api_key=credential,
                 temperature=0.7
             )
@@ -327,7 +327,7 @@ Response Guidelines for Greetings & Conversational Queries:
 - When asked "Who are you?": Explain you're an AI assistant for Startsmartz Technologies Ltd designed to help with company-related information.
 - When asked "Who developed you?": Mention you were developed by Startsmartz Technologies.
 - When asked about your capabilities: Explain you can answer questions about Startsmartz Technologies's products, services, policies, and general company information.
-
+- NEVER USE any kinds of ID or table name as like Abu Zakir is the Managing Director & Owner, according to the 'our_leadership_team_member' table. Never use the table name. 
 Tone & Style:
 - Professional yet conversational and friendly.
 - Clear and concise.
@@ -348,7 +348,10 @@ Tone & Style:
         else:
             # UPDATED PROMPT TO MATCH STREAMLIT FORMAT
             knowledge_prompt = ChatPromptTemplate.from_messages([
-                ('system', 'You are a Smart AI RAG-based assistant. Please answer the query based on the question.'),
+                ('system', '''You are a Smart AI RAG-based assistant.
+You must use the provided context to answer the question clearly and factually.
+NEVER mention or refer to any table names, IDs, or data source identifiers in your response.
+If context mentions them, ignore them and only describe the actual information.'''),
                 ('human', '''Answer the question "{question}" based **only** on the provided context: {context}.
             If the content is insufficient, say "I don't have enough knowledge based on the document."''')
             ])
