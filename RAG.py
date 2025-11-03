@@ -1,4 +1,4 @@
-from pinecone.grpc import PineconeGRPC as Pinecone  # Changed to gRPC client
+from pinecone.grpc import PineconeGRPC as Pinecone
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -13,6 +13,7 @@ from enum import Enum
 import uvicorn
 import httpx
 import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -46,7 +47,7 @@ class QueryRequest(BaseModel):
 # Response Models
 class SourceMatch(BaseModel):
     id: str
-    page_number: str  # Changed from url
+    page_number: str
     score: float
     preview: str
 
@@ -65,7 +66,7 @@ class AppConfig:
     PROVIDER = "gemini"
     CREDENTIAL = os.getenv("GOOGLE_API_KEY")
     VALIDATOR_URL = "https://provider-credential-validdator.onrender.com/validate"
-    TOP_K = int(os.getenv("TOP_K", "10"))
+    TOP_K = int(os.getenv("TOP_K", "20"))
     PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
     PINECONE_INDEX_NAME = "startsmartz"
     EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
@@ -83,7 +84,7 @@ async def startup_event():
             raise ValueError(f"❌ {AppConfig.PROVIDER.upper()}_API_KEY not found in environment variables")
         
         # Initialize Pinecone with gRPC
-        pc = Pinecone(api_key=AppConfig.PINECONE_API_KEY)  # Now using gRPC client
+        pc = Pinecone(api_key=AppConfig.PINECONE_API_KEY)
         pinecone_index = pc.Index(AppConfig.PINECONE_INDEX_NAME)
         
         # Initialize HuggingFace embeddings
@@ -145,6 +146,56 @@ async def validate_credential(provider: str, credential: str, validator_url: str
             "details": str(e)
         }
 
+def expand_query_with_synonyms(query: str) -> str:
+    """
+    Expand query with business synonyms and abbreviations for better retrieval
+    """
+    query_lower = query.lower()
+    
+    # Executive title expansions
+    title_mappings = {
+        r'\bcto\b': 'CTO Chief Technology Officer Chief Technological Officer',
+        r'\bceo\b': 'CEO Chief Executive Officer',
+        r'\bmd\b': 'MD Managing Director',
+        r'\bed\b': 'ED Executive Director',
+        r'\bcfo\b': 'CFO Chief Financial Officer',
+        r'\bcoo\b': 'COO Chief Operating Officer',
+        r'\bcmo\b': 'CMO Chief Marketing Officer',
+    }
+    
+    # Location/Address synonyms
+    location_mappings = {
+        r'\boffice address\b': 'office address office location headquarters address company address',
+        r'\boffice location\b': 'office location office address headquarters location company location',
+        r'\bheadquarters\b': 'headquarters office address office location main office',
+    }
+    
+    # Technology synonyms
+    tech_mappings = {
+        r'\btech stack\b': 'tech stack technology stack technology products technical stack',
+        r'\btechnology stack\b': 'technology stack tech stack technology products technical products',
+        r'\btechnology products\b': 'technology products tech stack technology stack products',
+    }
+    
+    # Job/Career synonyms
+    job_mappings = {
+        r'\bjob\b': 'job vacancy position opening career opportunity employment',
+        r'\bvacancy\b': 'vacancy job opening position available role',
+        r'\bhiring\b': 'hiring recruiting job opening vacancy position',
+        r'\bcareer\b': 'career job opportunity position employment',
+    }
+    
+    expanded_query = query
+    
+    # Apply all mappings
+    all_mappings = {**title_mappings, **location_mappings, **tech_mappings, **job_mappings}
+    
+    for pattern, expansion in all_mappings.items():
+        if re.search(pattern, query_lower):
+            expanded_query += f" {expansion}"
+    
+    return expanded_query
+
 def classify_query(question: str) -> str:
     """Classify if query needs RAG retrieval or is conversational"""
     conversational_patterns = [
@@ -168,9 +219,36 @@ def classify_query(question: str) -> str:
     
     return "knowledge_based"
 
+def clean_metadata_content(content: str) -> str:
+    """
+    Clean content to remove table names, SQL artifacts, and technical identifiers
+    """
+    if not content:
+        return content
+    
+    # Remove SQL statements
+    content = re.sub(r'LOCK TABLES.*?;', '', content, flags=re.IGNORECASE | re.DOTALL)
+    content = re.sub(r'UNLOCK TABLES.*?;', '', content, flags=re.IGNORECASE | re.DOTALL)
+    content = re.sub(r'INSERT INTO.*?;', '', content, flags=re.IGNORECASE | re.DOTALL)
+    
+    # Remove table name patterns
+    content = re.sub(r'\b[a-z_]+_table\b', '', content, flags=re.IGNORECASE)
+    content = re.sub(r'\btable:`[^`]+`', '', content)
+    content = re.sub(r'from `[^`]+`', '', content, flags=re.IGNORECASE)
+    
+    # Remove technical artifacts
+    content = re.sub(r'`[a-z_]+`\s+WRITE', '', content, flags=re.IGNORECASE)
+    content = re.sub(r'\bid\s*:\s*\d+', '', content, flags=re.IGNORECASE)
+    
+    # Clean up extra whitespace
+    content = re.sub(r'\s+', ' ', content)
+    content = content.strip()
+    
+    return content
+
 def get_context(query_text: str, top_k: int = 3) -> tuple:
     """
-    Retrieve relevant context from Pinecone using embeddings
+    Retrieve relevant context from Pinecone using embeddings with query expansion
     
     Args:
         query_text: User query string
@@ -192,8 +270,11 @@ def get_context(query_text: str, top_k: int = 3) -> tuple:
                 detail="Pinecone index not initialized"
             )
         
-        # Generate query embedding
-        query_vector = embedding_model.embed_query(query_text)
+        # Expand query with synonyms for better retrieval
+        expanded_query = expand_query_with_synonyms(query_text)
+        
+        # Generate query embedding using expanded query
+        query_vector = embedding_model.embed_query(expanded_query)
         
         # Query Pinecone
         results = pinecone_index.query(
@@ -206,36 +287,38 @@ def get_context(query_text: str, top_k: int = 3) -> tuple:
         if not results.get('matches'):
             return "No relevant context found.", []
         
-        # Format context MATCHING STREAMLIT LOGIC
+        # Format context with cleaned content
         context_parts = []
         matches_list = []
         
         for i, match in enumerate(results['matches']):
             metadata = match.get('metadata', {})
             
-            # Use the CORRECT field names from your Pinecone data
             page_number = metadata.get('page_number', 'N/A')
             url = metadata.get('url', 'N/A')
-            content = metadata.get('content', '')  # Changed from 'text' to 'content'
+            content = metadata.get('content', '')
             
-            if content:
-                # Format context exactly like Streamlit
+            # Clean the content to remove technical artifacts
+            cleaned_content = clean_metadata_content(content)
+            
+            if cleaned_content:
                 context_parts.append(
-                    f"Page Number: {page_number}\n"
-                    f"URL: {url}\n"
-                    f"Content: {content}"
+                    f"Source {i+1}:\n"
+                    f"Page: {page_number}\n"
+                    f"Reference: {url}\n"
+                    f"Information: {cleaned_content}"
                 )
                 
                 matches_list.append(
                     SourceMatch(
                         id=match.get('id', 'Unknown'),
-                        page_number=str(page_number),  # Changed from url to page_number
+                        page_number=str(page_number),
                         score=round(match.get('score', 0.0), 4),
-                        preview=content[:200] + "..." if len(content) > 200 else content
+                        preview=cleaned_content[:200] + "..." if len(cleaned_content) > 200 else cleaned_content
                     )
                 )
         
-        context = "\n\n".join(context_parts) if context_parts else "No relevant context found."
+        context = "\n\n---\n\n".join(context_parts) if context_parts else "No relevant context found."
         
         return context, matches_list
         
@@ -252,9 +335,9 @@ def initialize_llm(provider: str, credential: str):
     try:
         if provider == "gemini":
             llm = ChatGoogleGenerativeAI(
-                model="gemini-2.5-pro",
+                model="gemini-2.5-flash",
                 google_api_key=credential,
-                temperature=0.9
+                temperature=0.7
             )
         elif provider == "openai":
             llm = ChatOpenAI(
@@ -324,10 +407,10 @@ Core Identity:
 
 Response Guidelines for Greetings & Conversational Queries:
 - Respond warmly and professionally to greetings like "Hi", "Hello", "How are you".
-- When asked "Who are you?": Explain you're an AI assistant for Startsmartz Technologies Ltd designed to help with company-related information.
+- When asked "Who are you?": Explain you're an AI assistant for Startsmartz Technologies designed to help with company-related information.
 - When asked "Who developed you?": Mention you were developed by Startsmartz Technologies.
 - When asked about your capabilities: Explain you can answer questions about Startsmartz Technologies's products, services, policies, and general company information.
-- NEVER USE any kinds of ID or table name as like Abu Zakir is the Managing Director & Owner, according to the 'our_leadership_team_member' table. Never use the table name. 
+
 Tone & Style:
 - Professional yet conversational and friendly.
 - Clear and concise.
@@ -346,20 +429,75 @@ Tone & Style:
             )
         
         else:
-            # UPDATED PROMPT TO MATCH STREAMLIT FORMAT
+            # ENHANCED KNOWLEDGE-BASED PROMPT
             knowledge_prompt = ChatPromptTemplate.from_messages([
-                ('system', '''You are a Smart AI RAG-based assistant.
-You must use the provided context to answer the question clearly and factually.
-NEVER mention or refer to any table names, IDs, or data source identifiers in your response.
-If context mentions them, ignore them and only describe the actual information.'''),
-                ('human', '''Answer the question "{question}" based **only** on the provided context: {context}.
-            If the content is insufficient, say "I don't have enough knowledge based on the document."''')
-            ])
+                ('system', '''You are a Smart AI RAG-based assistant for Startsmartz Technologies.
 
+CRITICAL INSTRUCTIONS - READ CAREFULLY:
+
+1. **Use ONLY the provided context** to answer questions. Do not use external knowledge.
+
+2. **Executive Title Understanding:**
+   - CEO = Chief Executive Officer
+   - CTO = Chief Technology Officer / Chief Technological Officer
+   - MD = Managing Director
+   - ED = Executive Director
+   - CFO = Chief Financial Officer
+   Always recognize these abbreviations and their full forms as equivalent.
+
+3. **Location Terminology:**
+   - "Office address", "office location", "headquarters", and "company address" all refer to the SAME thing
+   - When asked about any of these, provide the complete address information
+
+4. **Technology/Product Terminology:**
+   - "Technology products", "tech stack", "technology stack", and "technical stack" all refer to the SAME thing
+   - These terms are interchangeable - treat them as synonyms
+   - **IMPORTANT**: When asked about technologies/tech stack/products, ALWAYS present them as a bulleted list, one per line
+   - Format: "Startsmartz Technologies uses the following technologies:\n- Technology 1\n- Technology 2\n- Technology 3"
+
+5. **Job/Career Terminology:**
+   - "Job openings", "vacancies", "positions", "career opportunities", and "hiring" all refer to the SAME thing
+   - When asked about any job-related query, reference available positions
+
+6. **NEVER mention or include:**
+   - Table names (e.g., "our_leadership_team_member", "team_member", "job_offer", "technology_product")
+   - Database identifiers or IDs
+   - SQL statements or technical artifacts
+   - Any backend system references
+
+7. **Data Source Distinction:**
+   - Different data sources contain different types of information
+   - Do not confuse leadership information with general team member information
+   - Do not mix job posting data with employee data
+
+8. **Response Style:**
+   - Provide natural, conversational answers
+   - Be specific and accurate
+   - For technology listings: Use bulleted lists (markdown format with "- " prefix)
+   - If the context doesn't contain the answer, clearly state: "I don't have that information in the available documents."
+   - Never fabricate or hallucinate information not in the context'''),
+                ('human', '''Question: {question}
+
+Context Information:
+{context}
+
+Instructions:
+- Answer based ONLY on the context above
+- Understand synonym relationships (CEO/Chief Executive Officer, office address/office location, tech stack/technology products, jobs/vacancies)
+- **CRITICAL**: If the question is about technologies/tech stack/technology products, format your response as a bulleted list with each technology on a separate line
+- Do not mention any technical database terms or table names
+- If insufficient information, say "I don't have enough information about that in the available documents."
+
+Example format for technology questions:
+"Startsmartz Technologies uses the following technologies:
+- Technology A
+- Technology B
+- Technology C"''')
+            ])
             
             chain = knowledge_prompt | llm | output_parser
             
-            # Get context from Pinecone
+            # Get context from Pinecone with expanded query
             context, matches = get_context(request.query, top_k)
             
             # Generate response
@@ -418,16 +556,9 @@ async def root():
     }
 
 if __name__ == "__main__":
-    # Determine server port first so ngrok (if used) forwards to the
-    # actual port the server will listen on. You can override PORT or
-    # LOCAL_PORT via environment variables. LOCAL_PORT takes precedence
-    # for the ngrok tunnel if explicitly set, otherwise it defaults to
-    # the server PORT.
     port = int(os.getenv("PORT", "8010"))
-    # If LOCAL_PORT is set, use it for ngrok; otherwise default to server port
     local_port = int(os.getenv("LOCAL_PORT", str(port)))
 
-    # Optional ngrok for local development. Enable by setting USE_NGROK=true
     if os.getenv("USE_NGROK", "true").lower() in ("1", "true", "yes"):
         try:
             from pyngrok import ngrok

@@ -7,7 +7,7 @@ st.set_page_config(page_title="Chatbot", page_icon="💬", layout="centered")
 st.title("💬 Simple Chatbot")
 
 # ✅ Your FastAPI endpoint via ngrok
-API_URL = "https://768447384733.ngrok-free.app/query"
+API_URL = "https://f723951c4259.ngrok-free.app/query"
 
 # Initialize session history
 if "messages" not in st.session_state:
