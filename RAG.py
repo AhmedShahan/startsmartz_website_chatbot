@@ -335,9 +335,9 @@ def initialize_llm(provider: str, credential: str):
     try:
         if provider == "gemini":
             llm = ChatGoogleGenerativeAI(
-                model="gemini-2.5-flash",
+                model="gemini-2.5-pro",
                 google_api_key=credential,
-                temperature=0.7
+                temperature=0.9
             )
         elif provider == "openai":
             llm = ChatOpenAI(

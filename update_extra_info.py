@@ -30,7 +30,6 @@ index = pc.Index(index_name)
 # =====================================================
 extra_text = """
 Company Information:
-
 Locations:
 1. Dubai Office:
    Office No. 203, Business Bay, Dubai, UAE
@@ -42,6 +41,27 @@ Locations:
 
 Office Hours:
 Saturday to Thursday, from 9 AM to 6 PM
+
+
+
+
+Website Technology Stack (StartSmartz):
+Programming Languages:
+- JavaScript (Front-end)
+
+Front-end:
+- HTML/CSS/JavaScript
+- Possibly React or Vue (not clearly identified)
+
+Backend / Server-side:
+- Unknown (no public indicators)
+
+Databases:
+- Unknown (likely MySQL/PostgreSQL or MongoDB if MERN stack)
+
+Artificial Intelligence:
+- No obvious AI modules on the public site
+
 """
 
 extra_doc = Document(
